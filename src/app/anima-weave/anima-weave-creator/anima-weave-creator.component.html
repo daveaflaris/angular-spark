@@ -1,0 +1,57 @@
+<div class="main-container">
+  <mat-card>
+    <div class="fundamental-component">
+      <mat-form-field>
+        <mat-label>Select your Trope</mat-label>
+        <mat-select (selectionChange)="selectTrope($event.value)">
+          <mat-option *ngFor="let trope of tropes" [value]="trope">
+            {{trope.tropeName}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{triggerPoints }} 
+        <span *ngIf="triggerPoints > 0; else cost">
+          <span *ngIf="triggerPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+      <div class="keyword-gap"></div>
+      <ng-template #triggers></ng-template>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{ targetPoints }} 
+        <span *ngIf="targetPoints > 0; else cost">
+          <span *ngIf="targetPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+      <div class="keyword-gap"></div>
+      <ng-template #targets></ng-template>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{ totalPoints }} 
+        <span *ngIf="totalPoints > 0; else cost">
+          <span *ngIf="totalPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+    </div>
+  </mat-card>
+</div>

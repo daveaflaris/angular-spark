@@ -1,0 +1,29 @@
+<div class="component" [style.padding-left.px]="keywordLevel * 20">
+  <div>
+    <span class="keyword-dropdown">
+      <mat-form-field *ngIf="fixedQuantityKeywords.indexOf(keywordLabel) === -1; else textInput">
+        <mat-label>{{keywordLabel}}</mat-label>
+        <mat-select [(ngModel)]="selectedKeyword" (selectionChange)="processKeyword($event.value, 'select')">
+          <mat-option *ngFor="let keyword of keywords" [value]="keyword">
+            <div class="option-row">
+              <div class="cost-icon" [ngClass]="checkKeywordCost(keyword.cost)">{{keyword.cost}}</div>
+              &nbsp;
+              <div *ngIf="keyword.tropeKeyword" class="cost-icon" [ngClass]="checkKeywordTrope(keyword.tropeKeyword)">T</div>
+              &nbsp;
+              <div>{{keyword.keyword}}</div>
+            </div>
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+      <ng-template #textInput>
+        <mat-form-field>
+          <input matInput type="number" [(ngModel)]="enteredKeyword" (blur)="calculateKeywordCost($event.target.value)">
+        </mat-form-field>
+      </ng-template>
+    </span>
+    <span class="remove-keyword">
+      <button mat-raised-button color="primary" (click)="removeKeyword(index)">-</button>
+    </span>
+  </div>
+  <ng-template #keywordList></ng-template>
+</div>
