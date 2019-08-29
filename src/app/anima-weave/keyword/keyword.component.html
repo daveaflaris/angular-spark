@@ -18,7 +18,7 @@
               <div *ngIf="keyword.factionKeyword">&nbsp;</div>
               <div *ngIf="keyword.hybrid" class="cost-icon hybrid-keyword">[H]</div>
               <div *ngIf="keyword.hybrid">&nbsp;</div>
-              <div>{{keyword.keyword}}</div>
+              <div class="option-keyword">{{keyword.keyword}}</div>
             </div>
           </mat-option>
         </mat-select>
@@ -30,7 +30,7 @@
       </ng-template>
     </span>
     <span *ngIf="!keywordDisabled" class="remove-keyword">
-      <button mat-raised-button color="primary" (click)="removeKeyword(index)">-</button>
+      <button mat-raised-button [ngClass]="setButtonColor(keywordLabel)" (click)="removeKeyword(index)"><mat-icon>remove</mat-icon></button>
     </span>
   </div>
   <ng-template #keywordList></ng-template>

@@ -130,6 +130,6 @@ export const coreTriggerKeywords = [
     component: '[Trigger]',
     keyword: '[Target] makes a [SkillCheck]. On a success, [Target] [Effect]. On a failure, [Target] [Effect]',
     cost: 0,
-    hybrid: ['[Target]','[Effect']
+    hybrid: ['[Target]','[Effect]']
   },
 ]

@@ -651,6 +651,29 @@ export class KeywordComponent implements OnInit, OnDestroy {
 
   }
 
+  setButtonColor(component: string) {
+    switch(component) {
+      case '[Trigger]':
+        return 'trigger-remove';
+        break;
+      case '[Target]':
+        return 'target-remove';
+        break;
+      case '[Effect]':
+        return 'effect-remove';
+        break;
+      case '[Duration]':
+        return 'duration-remove';
+        break;
+      case '[Cooldown]':
+        return 'cooldown-remove';
+        break;
+      default:
+        return 'variable-remove';
+        break;
+    }
+  }
+
   ngOnDestroy() {
     if (this.selectedKeyword) {
       if (this.selectedKeyword.hybrid) {
