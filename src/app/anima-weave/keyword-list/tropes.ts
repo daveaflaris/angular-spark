@@ -1,9 +1,9 @@
-import {KeywordModel} from './keyword-model';
+import {KeywordModel, TropeModel} from './keyword-model';
 
 export const asceticKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character spends [FixedQuantity-StaticValue] Serenity',
+    keyword: 'The character spends [Quantity] Serenity',
     cost: 3,
     tropeKeyword: true,
   },
@@ -24,7 +24,7 @@ export const augmentedKeywords: KeywordModel[] = [
   }
 ];
 
-export const tropes = [
+export const tropes: TropeModel[] = [
   {
     tropeName: 'Ascetic',
     tropeKeywords: asceticKeywords,
@@ -34,5 +34,3 @@ export const tropes = [
     tropeKeywords: augmentedKeywords,
   }
 ];
-
-
