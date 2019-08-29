@@ -12,9 +12,22 @@
     </div>
   </mat-card>
   <div class="keyword-gap"></div>
+    <mat-card>
+      <div class="fundamental-component">
+        <mat-form-field>
+          <mat-label>Select your Faction</mat-label>
+          <mat-select (selectionChange)="selectFaction($event.value)">
+            <mat-option *ngFor="let faction of factions" [value]="faction">
+              {{faction.factionName}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <div class="keyword-gap"></div>
   <mat-card>
     <div class="fundamental-component">
-      <div>{{triggerPoints }} 
+      <div>{{triggerPoints }}
         <span *ngIf="triggerPoints > 0; else cost">
           <span *ngIf="triggerPoints > 1; else singular">Weave Points</span>
           <ng-template #singular>Weave Point</ng-template>
@@ -29,7 +42,7 @@
   <div class="keyword-gap"></div>
   <mat-card>
     <div class="fundamental-component">
-      <div>{{ targetPoints }} 
+      <div>{{ targetPoints }}
         <span *ngIf="targetPoints > 0; else cost">
           <span *ngIf="targetPoints > 1; else singular">Weave Points</span>
           <ng-template #singular>Weave Point</ng-template>
@@ -44,7 +57,52 @@
   <div class="keyword-gap"></div>
   <mat-card>
     <div class="fundamental-component">
-      <div>{{ totalPoints }} 
+      <div>{{ effectPoints }}
+        <span *ngIf="effectPoints > 0; else cost">
+          <span *ngIf="effectPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+      <div class="keyword-gap"></div>
+      <ng-template #effects></ng-template>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{ durationPoints }}
+        <span *ngIf="durationPoints > 0; else cost">
+          <span *ngIf="durationPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+      <div class="keyword-gap"></div>
+      <ng-template #durations></ng-template>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{ cooldownPoints }}
+        <span *ngIf="cooldownPoints > 0; else cost">
+          <span *ngIf="cooldownPoints > 1; else singular">Weave Points</span>
+          <ng-template #singular>Weave Point</ng-template>
+          Added
+        </span>
+        <ng-template #cost>Weave Point Cost</ng-template>
+      </div>
+      <div class="keyword-gap"></div>
+      <ng-template #cooldowns></ng-template>
+    </div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card>
+    <div class="fundamental-component">
+      <div>{{ totalPoints }}
         <span *ngIf="totalPoints > 0; else cost">
           <span *ngIf="totalPoints > 1; else singular">Weave Points</span>
           <ng-template #singular>Weave Point</ng-template>

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable, BehaviorSubject} from 'rxjs';
-import {TropeModel} from '../keyword-list/keyword-model';
+import {HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,6 +9,10 @@ export class AnimaWeaveCreatorService {
   currentTrope: TropeModel = {} as TropeModel;
   currentTropeObservable: Observable<TropeModel>;
   currentTropeStream = new BehaviorSubject<TropeModel>({} as TropeModel);
+
+  currentFaction: FactionModel = {} as FactionModel;
+  currentFactionObservable: Observable<FactionModel>;
+  currentFactionStream = new BehaviorSubject<FactionModel>({} as FactionModel);
 
   totalWeavePointCost: number = 0;
   totalWeavePointCostObservable: Observable<number>;
@@ -21,19 +25,26 @@ export class AnimaWeaveCreatorService {
   targetWeavePointCost: number = 0;
   targetWeavePointCostObservable: Observable<number>;
   targetWeavePointCostStream = new BehaviorSubject<number>(0);
-  
+
   effectWeavePointCost: number = 0;
   effectWeavePointCostObservable: Observable<number>;
   effectWeavePointCostStream = new BehaviorSubject<number>(0);
-  
+
   durationWeavePointCost: number = 0;
   durationWeavePointCostObservable: Observable<number>;
   durationWeavePointCostStream = new BehaviorSubject<number>(0);
-  
+
   cooldownWeavePointCost: number = 0;
   cooldownWeavePointCostObservable: Observable<number>;
   cooldownWeavePointCostStream = new BehaviorSubject<number>(0);
-  
+
+  refreshWeave: boolean = false;
+  refreshWeaveObservable: Observable<boolean>;
+  refreshWeaveStream = new BehaviorSubject<boolean>(false);
+
+  hybridComponent: string[] = [];
+  hybridComponentObservable: Observable<HybridCommand>;
+  hybridComponentStream = new BehaviorSubject<HybridCommand>({hybrid: [], disable: false});
 
   weavePointModifier: Observable<number>;
   weavePointCost = new BehaviorSubject<number>(0);
@@ -47,10 +58,29 @@ export class AnimaWeaveCreatorService {
     this.durationWeavePointCostObservable = this.durationWeavePointCostStream.asObservable();
     this.cooldownWeavePointCostObservable = this.cooldownWeavePointCostStream.asObservable();
     this.currentTropeObservable = this.currentTropeStream.asObservable();
+    this.currentFactionObservable = this.currentFactionStream.asObservable();
+    this.refreshWeaveObservable = this.refreshWeaveStream.asObservable();
+    this.hybridComponentObservable = this.hybridComponentStream.asObservable();
+  }
+
+  refreshAnimaWeave(refresh: boolean) {
+    this.refreshWeaveStream.next(refresh);
   }
 
   setSelectedTrope(trope: TropeModel) {
     this.currentTropeStream.next(trope);
+  }
+
+  setSelectedFaction(faction: FactionModel) {
+    this.currentFactionStream.next(faction);
+  }
+
+  enableComponents(command: {hybrid: string[], disable: boolean}) {
+    this.hybridComponentStream.next(command);
+  }
+
+  disableComponents(command: {hybrid: string[], disable: boolean}) {
+    this.hybridComponentStream.next(command);
   }
 
   modifyWeavePoint(keywordCost: number, component: string) {
