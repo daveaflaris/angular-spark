@@ -7,11 +7,14 @@
     <div class="fundamental-component">
       <mat-form-field>
         <mat-label>Select your Trope</mat-label>
-        <mat-select (selectionChange)="selectTrope($event.value)">
-          <mat-option *ngFor="let trope of tropes" [value]="trope">
+        <select matNativeControl
+                [(ngModel)]="selectedTrope"
+                (ngModelChange)="selectTrope($event)">
+          <option value="" disabled>Select Trope...</option>
+          <option *ngFor="let trope of tropes" [ngValue]="trope">
             {{trope.tropeName}}
-          </mat-option>
-        </mat-select>
+          </option>
+        </select>
       </mat-form-field>
     </div>
   </mat-card>
@@ -20,11 +23,14 @@
     <div class="fundamental-component">
       <mat-form-field>
         <mat-label>Select your Faction</mat-label>
-        <mat-select (selectionChange)="selectFaction($event.value)">
-          <mat-option *ngFor="let faction of factions" [value]="faction">
+        <select matNativeControl
+                [(ngModel)]="selectedFaction"
+                (ngModelChange)="selectFaction($event)">
+          <option value="" disabled>Select Patron Faction...</option>
+          <option *ngFor="let faction of factions" [ngValue]="faction">
             {{faction.factionName}}
-          </mat-option>
-        </mat-select>
+          </option>
+        </select>
       </mat-form-field>
     </div>
   </mat-card>
@@ -33,7 +39,7 @@
     <div class="step-text">Step 2: Fill out the Fundamental Components</div>
   </mat-card>
   <div class="keyword-gap"></div>
-  <mat-card class="trope-card">
+  <!-- <mat-card class="trope-card">
     <div class="step-text">
       <div class="legend-text"><div class="cost-icon weave-added">X</div><div class="legend-text-explained"> = Weave Points Added</div></div>
       <div class="legend-text"><div class="cost-icon weave-cost">X</div><div class="legend-text-explained"> = Weave Point Cost</div></div>
@@ -42,7 +48,7 @@
       <div class="legend-text"><div class="cost-icon hybrid-keyword">H</div><div class="legend-text-explained"> = Hybrid Component</div></div>
     </div>
   </mat-card>
-  <div class="keyword-gap"></div>
+  <div class="keyword-gap"></div> -->
   <mat-card class="trigger-card">
     <div class="fundamental-component">
       <div class="legend-text">

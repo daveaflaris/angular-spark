@@ -1,3 +1,13 @@
+import {KeywordComponent} from '../keyword/keyword.component'
+
+export declare interface AnimaWeaveModel {
+  trigger: KeywordComponent;
+  target: KeywordComponent;
+  effect: KeywordComponent;
+  duration: KeywordComponent;
+  cooldown: KeywordComponent;
+}
+
 export declare interface KeywordModel {
   component?: string;
   keyword: string;
@@ -5,6 +15,7 @@ export declare interface KeywordModel {
   hybrid?: string[];
   tropeKeyword?: boolean;
   factionKeyword?: boolean;
+  childKeywords?: KeywordModel[];
 }
 
 export declare interface HybridCommand {

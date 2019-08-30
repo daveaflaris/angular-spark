@@ -24,7 +24,7 @@ import {coreStatusKeywords} from '../keyword-list/statuses';
 import {coreTimeframeKeywords} from '../keyword-list/timeframes';
 import {tropes} from '../keyword-list/tropes';
 
-import {KeywordModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {KeywordModel, AnimaWeaveModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 import {AnimaWeaveCreatorService} from '../anima-weave-creator/anima-weave-creator.service';
 
@@ -45,6 +45,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
   @Input() parentContainerRef: ViewContainerRef;
 
   @ViewChild('keywordList', {read: ViewContainerRef, static: false}) keywordContainerRef: ViewContainerRef;
+
+  animaWeave: AnimaWeaveModel;
+  animaWeaveComponents: KeywordModel[] = [];
 
   keywordIndex: number = 0;
   keywordLevel: number = 0;
@@ -84,13 +87,25 @@ export class KeywordComponent implements OnInit, OnDestroy {
   periodKeywords: KeywordModel[] = [...corePeriodKeywords];
   proficiencyKeywords: KeywordModel[] = [...coreProficiencyKeywords];
   quantityKeywords: KeywordModel[] = [...coreQuantityKeywords];
-  fixedQuantityKeywords = ['[FixedQuantity-StaticValue]'];
+  fixedQuantityKeywords = [
+    '[FixedQuantity-StaticValue]',
+    '[FixedQuantity-Target]',
+    '[FixedQuantity-Item]',
+    '[FixedQuantity-NPC]',
+    '[FixedQuantity-Dice]',
+    '[FixedQuantity-Modifier]',
+    '[FixedQuantity-Period]',
+    '[FixedQuantity-ActionType]',
+    '[FixedQuantity-Miscellaneous]',
+    '[FixedQuantity-AnimaWeavePoints]',
+  ];
   variableQuantityKeywords: KeywordModel[] = [...coreVariableQuantityKeywords];
   rangeKeywords: KeywordModel[] = [...coreRangeKeywords];
   situationKeywords: KeywordModel[] = [...coreSituationKeywords];
   skillCheckKeywords: KeywordModel[] = [...coreSkillCheckKeywords];
   staticValueKeywords: KeywordModel[] = [...coreStaticValueKeywords];
   statusKeywords: KeywordModel[] = [...coreStatusKeywords];
+  taskKeywords: KeywordModel[] = [];
   timeframeKeywords: KeywordModel[] = [...coreTimeframeKeywords];
 
   currentQuantity = -1;
@@ -128,6 +143,12 @@ export class KeywordComponent implements OnInit, OnDestroy {
         this.populateFactionKeywords(this.selectedFaction);
       }
     })
+
+    this.animaWeaveService.animaWeaveObservable.subscribe((data) => {
+      this.animaWeave = data;
+    })
+
+    // console.log(this.buildAnimaWeave(this.animaWeaveComponents));
   }
 
   populateTropeKeywords(trope: TropeModel) {
@@ -219,6 +240,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
           case '[Status]':
             this.statusKeywords.push(keyword);
             this.replaceCurrentKeywords(this.statusKeywords, '[Status]');
+            break;
+          case '[Task]':
+            this.taskKeywords.push(keyword);
+            this.replaceCurrentKeywords(this.taskKeywords, '[Task]');
             break;
           case '[Timeframe]':
             this.timeframeKeywords.push(keyword);
@@ -321,6 +346,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
             this.statusKeywords.push(keyword);
             this.replaceCurrentKeywords(this.statusKeywords, '[Status]');
             break;
+          case '[Task]':
+            this.taskKeywords.push(keyword);
+            this.replaceCurrentKeywords(this.taskKeywords, '[Task]');
+            break;
           case '[Timeframe]':
             this.timeframeKeywords.push(keyword);
             this.replaceCurrentKeywords(this.timeframeKeywords, '[Timeframe]');
@@ -336,6 +365,7 @@ export class KeywordComponent implements OnInit, OnDestroy {
     if (component === this.keywordLabel) {
       this.keywords = keywords;
     }
+    this.selectedKeyword = null;
   }
 
   getParentKeyword() {
@@ -360,6 +390,27 @@ export class KeywordComponent implements OnInit, OnDestroy {
       // console.log(child.selectedKeyword);
       child.getChildKeywords()
     })
+  }
+
+  buildAnimaWeave(animaWeaveArr: KeywordModel[]) {
+    if (this.animaWeave) {
+      animaWeaveArr.push(this.animaWeave.trigger.selectedKeyword);
+      if (this.animaWeave.trigger.selectedKeyword && this.animaWeave.trigger.childKeywords) {
+        this.animaWeave.trigger.childKeywords.forEach((child) => {
+          this.animaWeave.trigger.selectedKeyword.childKeywords.push(child.selectedKeyword);
+          child.getChildComponents(animaWeaveArr[0]);
+        })
+      }
+    }
+  }
+
+  getChildComponents(component: KeywordModel) {
+    if (this.selectedKeyword && this.childKeywords) {
+      this.childKeywords.forEach((child) => {
+        component.childKeywords.push(child.selectedKeyword);
+        child.getChildComponents(component);
+      })
+    }
   }
 
   resetKeywords() {
@@ -426,6 +477,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
     this.statusKeywords = [...coreStatusKeywords];
     this.replaceCurrentKeywords(this.statusKeywords, '[Status]');
 
+    this.taskKeywords = [];
+    this.replaceCurrentKeywords(this.taskKeywords, '[Task]')
+
     this.timeframeKeywords = [...coreTimeframeKeywords];
     this.replaceCurrentKeywords(this.timeframeKeywords, '[Timeframe]');
   }
@@ -450,6 +504,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
 
     this.keywordComponentReferences.push(componentRef);
     this.childKeywords.push(componentRef.instance);
+    if (!this.selectedKeyword.childKeywords) {
+      this.selectedKeyword.childKeywords = [];
+    }
   }
 
   removeKeyword(index: number) {
@@ -501,105 +558,183 @@ export class KeywordComponent implements OnInit, OnDestroy {
       this.childKeywords = [];
     })
 
-    if (control === 'select') {
-      const keywordReg = /([[A-Za-z-]+])/g;
+    if (currentKeyword) {
+      currentKeyword = this.modifyKeywordCost(currentKeyword);
+      if (control === 'select') {
+        const keywordReg = /([[A-Za-z-]+])/g;
 
-      const nestedKeywords = currentKeyword.keyword['matchAll'](keywordReg);
-      this.keywordCost = currentKeyword.cost;
+        const nestedKeywords = currentKeyword.keyword.match(keywordReg);
+        this.keywordCost = currentKeyword.cost;
 
-      if (this.fixedQuantityKeywords.indexOf(currentKeyword.keyword) === -1) {
-        this.animaWeaveService.modifyWeavePoint(this.keywordCost, this.keywordComponent)
+        if (this.fixedQuantityKeywords.indexOf(currentKeyword.keyword) === -1) {
+          this.animaWeaveService.modifyWeavePoint(this.keywordCost, this.keywordComponent)
+        }
+
+        if (nestedKeywords) {
+          for (const keyword of nestedKeywords) {
+             switch(keyword) {
+              case '[Trigger]':
+                this.addKeyword(this.triggerKeywords, keyword, 1);
+                break;
+              case '[Target]':
+                this.addKeyword(this.targetKeywords, keyword, 1);
+                break;
+              case '[Effect]':
+                this.addKeyword(this.effectKeywords, keyword, 1);
+                break;
+              case '[Duration]':
+                this.addKeyword(this.durationKeywords, keyword, 1);
+                break;
+              case '[Cooldown]':
+                this.addKeyword(this.cooldownKeywords, keyword, 1);
+                break;
+              case '[Approach]':
+                this.addKeyword(this.approachKeywords, keyword, 1);
+                break;
+              case '[Attunement]':
+                this.addKeyword(this.attunementKeywords, keyword, 1);
+                break;
+              case '[Concept]':
+                this.addKeyword(this.conceptKeywords, keyword, 1);
+                break;
+              case '[Dicepool]':
+                this.addKeyword(this.dicepoolKeywords, keyword, 1);
+                break;
+              case '[Difficulty]':
+                this.addKeyword(this.difficultyKeywords, keyword, 1);
+                break;
+              case '[Item]':
+                this.addKeyword(this.itemKeywords, keyword, 1);
+                break;
+              case '[NPC]':
+                this.addKeyword(this.npcKeywords, keyword, 1);
+                break;
+              case '[Period]':
+                this.addKeyword(this.periodKeywords, keyword, 1);
+                break;
+              case '[Proficiency]':
+                this.addKeyword(this.proficiencyKeywords, keyword, 1);
+                break;
+              case '[Quantity]':
+                this.addKeyword(this.quantityKeywords, keyword, 1);
+                break;
+              case '[FixedQuantity-StaticValue]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Target]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Item]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-NPC]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Dice]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Modifier]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Period]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-ActionType]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-AnimaWeavePoints]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[FixedQuantity-Miscellaneous]':
+                this.addKeyword(this.quantityKeywords, keyword, currentKeyword.cost);
+                break;
+              case '[VariableQuantity]':
+                this.addKeyword(this.variableQuantityKeywords, keyword, 1);
+                break;
+              case '[Range]':
+                this.addKeyword(this.rangeKeywords, keyword, 1);
+                break;
+              case '[Situation]':
+                this.addKeyword(this.situationKeywords, keyword, 1);
+                break;
+              case '[SkillCheck]':
+                this.addKeyword(this.skillCheckKeywords, keyword, 1);
+                break;
+              case '[StaticValue]':
+                this.addKeyword(this.staticValueKeywords, keyword, 1);
+                break;
+              case '[Status]':
+                this.addKeyword(this.statusKeywords, keyword, 1);
+                break;
+              case '[Task]':
+                this.addKeyword(this.taskKeywords, keyword, 1);
+                break;
+              case '[Timeframe]':
+                this.addKeyword(this.timeframeKeywords, keyword, 1);
+                break;
+              default:
+                break;
+             }
+             if (keyword.indexOf('[VariableQuantity-') !== -1) {
+               this.addKeyword(this.variableQuantityKeywords, keyword, 1);
+             }
+          }
+        }
+
+
+        this.previousKeyword = this.selectedKeyword;
       }
 
-      for (const keyword of nestedKeywords) {
-         switch(keyword[0]) {
-          case '[Trigger]':
-            this.addKeyword(this.triggerKeywords, keyword[0], 1);
-            break;
-          case '[Target]':
-            this.addKeyword(this.targetKeywords, keyword[0], 1);
-            break;
-          case '[Effect]':
-            this.addKeyword(this.effectKeywords, keyword[0], 1);
-            break;
-          case '[Duration]':
-            this.addKeyword(this.durationKeywords, keyword[0], 1);
-            break;
-          case '[Cooldown]':
-            this.addKeyword(this.cooldownKeywords, keyword[0], 1);
-            break;
-          case '[Approach]':
-            this.addKeyword(this.approachKeywords, keyword[0], 1);
-            break;
-          case '[Attunement]':
-            this.addKeyword(this.attunementKeywords, keyword[0], 1);
-            break;
-          case '[Concept]':
-            this.addKeyword(this.conceptKeywords, keyword[0], 1);
-            break;
-          case '[Dicepool]':
-            this.addKeyword(this.dicepoolKeywords, keyword[0], 1);
-            break;
-          case '[Difficulty]':
-            this.addKeyword(this.difficultyKeywords, keyword[0], 1);
-            break;
-          case '[Item]':
-            this.addKeyword(this.itemKeywords, keyword[0], 1);
-            break;
-          case '[NPC]':
-            this.addKeyword(this.npcKeywords, keyword[0], 1);
-            break;
-          case '[Period]':
-            this.addKeyword(this.periodKeywords, keyword[0], 1);
-            break;
-          case '[Proficiency]':
-            this.addKeyword(this.proficiencyKeywords, keyword[0], 1);
-            break;
-          case '[Quantity]':
-            this.addKeyword(this.quantityKeywords, keyword[0], 1);
-            break;
-          case '[FixedQuantity-StaticValue]':
-            this.addKeyword(this.quantityKeywords, keyword[0], currentKeyword.cost);
-            break;
-          case '[VariableQuantity]':
-            this.addKeyword(this.variableQuantityKeywords, keyword[0], 1);
-            break;
-          case '[Range]':
-            this.addKeyword(this.rangeKeywords, keyword[0], 1);
-            break;
-          case '[Situation]':
-            this.addKeyword(this.situationKeywords, keyword[0], 1);
-            break;
-          case '[SkillCheck]':
-            this.addKeyword(this.skillCheckKeywords, keyword[0], 1);
-            break;
-          case '[StaticValue]':
-            this.addKeyword(this.staticValueKeywords, keyword[0], 1);
-            break;
-          case '[Status]':
-            this.addKeyword(this.statusKeywords, keyword[0], 1);
-            break;
-          case '[Timeframe]':
-            this.addKeyword(this.timeframeKeywords, keyword[0], 1);
-            break;
-          default:
-            break;
-         }
+      if (control === 'text') {
+        this.keywordCost = Number(this.enteredKeyword);
+        this.animaWeaveService.modifyWeavePoint(currentKeyword.cost, this.keywordComponent);
       }
 
-      this.previousKeyword = this.selectedKeyword;
+      if (currentKeyword.hybrid) {
+        // Disable the other components
+        this.animaWeaveService.disableComponents({hybrid: currentKeyword.hybrid, disable: true});
+      }
+
+      this.getParentKeyword();
     }
-    if (control === 'text') {
-      this.keywordCost = Number(this.enteredKeyword);
-      this.animaWeaveService.modifyWeavePoint(currentKeyword.cost, this.keywordComponent);
+  }
+
+  modifyKeywordCost(sk: KeywordModel) {
+    if (sk) {
+      // Periods on Triggers invert Weave Point Costing
+      if (sk.component === '[Period]' && this.keywordComponent === 'trigger') {
+        sk.cost = -(sk.cost);
+      }
+
+      // Random Targets invert Weave Point Costing
+      if (sk.component === '[Target]' && sk.keyword.toLowerCase().indexOf('random') !== -1) {
+        sk.cost = -(sk.cost);
+      }
+
+      // Effect happens in Quantity Period invert Weave Point Costing
+      if (sk.component === '[Period]' && this.keywordComponent === 'effect') {
+        sk.cost = -(sk.cost);
+      }
+
+      // Variable Quantities set their value to 0 when Static Values are spent
+      if (sk.component === '[VariableQuantity]' && this.keywordComponent === 'trigger' &&
+          this.parentKeyword.parentKeyword.selectedKeyword.keyword === 'The character spends [Quantity] [StaticValue]') {
+        sk.cost = -(this.parentKeyword.selectedKeyword.cost);
+      }
+
+      // Ongoing Skill Checks add Weave Points equal to the Skill Check's Weave Point Cost
+      if (sk.component === '[VariableQuantity]' &&
+          this.parentKeyword.parentKeyword.selectedKeyword.keyword === 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete') {
+        sk.cost = -(this.parentKeyword.selectedKeyword.cost * 2);
+      }
+
+      // Target ally with harmful effect
+      // console.log(this.animaWeave.target.selectedKeyword);
+      // console.log(this.animaWeave.effect.selectedKeyword);
+
     }
 
-    if (currentKeyword.hybrid) {
-      // Disable the other components
-      this.animaWeaveService.disableComponents({hybrid: currentKeyword.hybrid, disable: true});
-    }
-
-    this.getParentKeyword();
+    return sk;
   }
 
   checkKeywordCost(cost: number) {
@@ -629,8 +764,14 @@ export class KeywordComponent implements OnInit, OnDestroy {
     const qkc = this.getImmediateParent().getImmediateParent().keywordComponent;
 
     if ((qkr.keyword === 'The character spends [Quantity] [StaticValue]' && qkc === 'trigger') ||
-        (qkr.keyword === 'The character spends [Quantity] Serenity' && qkc === 'trigger')) {
+        (qkr.keyword === 'The character spends [Quantity] Serenity' && qkc === 'trigger') ||
+        (qkr.keyword === 'When [Target] gains at least [Quantity] [StaticValue]' && qkc === 'trigger') ||
+        (qkr.keyword === 'When [Target] loses at least [Quantity] [StaticValue]' && qkc === 'trigger') ||
+            (qkr.keyword === 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete')) {
       this.keywordQuantityMultiplier = 1;
+    }
+    if ((qkr.keyword === '[Effect] happens in [Quantity] [Period]' && qkc === 'effect')) {
+      this.keywordQuantityMultiplier = 2;
     }
 
     if (this.currentQuantity !== -1) {
@@ -648,7 +789,6 @@ export class KeywordComponent implements OnInit, OnDestroy {
     this.keywordCost = newKeyword.cost;
     this.currentQuantity = cost;
     this.processKeyword(newKeyword, 'text');
-
   }
 
   setButtonColor(component: string) {

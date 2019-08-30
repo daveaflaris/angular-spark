@@ -26,7 +26,7 @@ import {coreStaticValueKeywords} from '../keyword-list/static-values';
 import {coreStatusKeywords} from '../keyword-list/statuses';
 import {coreTimeframeKeywords} from '../keyword-list/timeframes';
 
-import {KeywordModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {AnimaWeaveModel, KeywordModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 import {AnimaWeaveCreatorService} from './anima-weave-creator.service';
 
 
@@ -42,6 +42,8 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   @ViewChild('effects', {read: ViewContainerRef, static: false}) effectContainerRef: ViewContainerRef;
   @ViewChild('durations', {read: ViewContainerRef, static: false}) durationContainerRef: ViewContainerRef;
   @ViewChild('cooldowns', {read: ViewContainerRef, static: false}) cooldownContainerRef: ViewContainerRef;
+
+  animaWeave: AnimaWeaveModel = {} as AnimaWeaveModel;
 
   keywordIndex: number = 0;
   keywordComponentReferences = [];
@@ -77,6 +79,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   skillCheckKeywords: KeywordModel[] = [...coreSkillCheckKeywords];
   staticValueKeywords: KeywordModel[] = [...coreStaticValueKeywords];
   statusKeywords: KeywordModel[] = [...coreStatusKeywords];
+  taskKeywords: KeywordModel[] = [];
   timeframeKeywords: KeywordModel[] = [...coreTimeframeKeywords];
 
   triggerPoints: number = 0;
@@ -151,7 +154,16 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.addEffect();
     this.addDuration();
     this.addCooldown();
+    this.animaWeaveService.setAnimaWeave(this.animaWeave);
     this.cdr.detectChanges();
+  }
+
+  resetAnimaWeave() {
+    this.childKeywords[0].processKeyword(null, '');
+    this.childKeywords[1].processKeyword(null, '');
+    this.childKeywords[2].processKeyword(null, '');
+    this.childKeywords[3].processKeyword(null, '');
+    this.childKeywords[4].processKeyword(null, '');
   }
 
   resetKeywords() {
@@ -177,6 +189,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.skillCheckKeywords = [...coreSkillCheckKeywords];
     this.staticValueKeywords = [...coreStaticValueKeywords];
     this.statusKeywords = [...coreStatusKeywords];
+    this.taskKeywords = [];
     this.timeframeKeywords = [...coreTimeframeKeywords];
   }
 
@@ -185,6 +198,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.selectedTrope = trope;
 
     this.resetKeywords();
+    this.resetAnimaWeave();
     this.populateTropeKeywords(trope);
     if (this.selectedFaction) {
       this.populateFactionKeywords(this.selectedFaction);
@@ -258,6 +272,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
         case '[Status]':
           this.statusKeywords.push(keyword);
           break;
+        case '[Task]':
+          this.taskKeywords.push(keyword);
+          break;
         case '[Timeframe]':
           this.timeframeKeywords.push(keyword);
           break;
@@ -272,6 +289,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.selectedFaction = faction;
 
     this.resetKeywords();
+    this.resetAnimaWeave();
     if (this.selectedTrope) {
       this.populateTropeKeywords(this.selectedTrope);
     }
@@ -345,6 +363,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
         case '[Status]':
           this.statusKeywords.push(keyword);
           break;
+        case '[Task]':
+          this.taskKeywords.push(keyword);
+          break;
         case '[Timeframe]':
           this.timeframeKeywords.push(keyword);
           break;
@@ -379,6 +400,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.keywordComponentReferences.push(componentRef);
 
     this.childKeywords.push(componentRef.instance);
+    this.animaWeave.trigger = componentRef.instance;
   }
 
   addTarget() {
@@ -398,6 +420,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.keywordComponentReferences.push(componentRef);
 
     this.childKeywords.push(componentRef.instance);
+    this.animaWeave.target = componentRef.instance;
   }
 
   addEffect() {
@@ -417,6 +440,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.keywordComponentReferences.push(componentRef);
 
     this.childKeywords.push(componentRef.instance);
+    this.animaWeave.effect = componentRef.instance;
   }
 
   addDuration() {
@@ -436,6 +460,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.keywordComponentReferences.push(componentRef);
 
     this.childKeywords.push(componentRef.instance);
+    this.animaWeave.duration = componentRef.instance;
   }
 
   addCooldown() {
@@ -455,5 +480,6 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.keywordComponentReferences.push(componentRef);
 
     this.childKeywords.push(componentRef.instance);
+    this.animaWeave.cooldown = componentRef.instance;
   }
 }

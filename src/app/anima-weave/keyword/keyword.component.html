@@ -1,37 +1,52 @@
-<div class="component" [style.padding-left.px]="20">
-  <div>
-    <span class="keyword-dropdown wide-dropdown">
-      <mat-form-field *ngIf="fixedQuantityKeywords.indexOf(keywordLabel) === -1; else textInput"
-                      class="wide-dropdown">
-        <mat-label>{{keywordLabel}}</mat-label>
-        <mat-select [(ngModel)]="selectedKeyword"
-                    (selectionChange)="processKeyword($event.value, 'select')"
-                    [disabled]="keywordDisabled">
-          <mat-option *ngFor="let keyword of keywords" [value]="keyword"
-                      [matTooltip]="keyword.keyword">
-            <div class="option-row">
-              <div class="cost-icon" [ngClass]="checkKeywordCost(keyword.cost)">[{{keyword.cost}}]</div>
-              <div>&nbsp;</div>
-              <div *ngIf="keyword.tropeKeyword" class="cost-icon" [ngClass]="checkKeywordTrope(keyword.tropeKeyword)">[T]</div>
-              <div *ngIf="keyword.tropeKeyword">&nbsp;</div>
-              <div *ngIf="keyword.factionKeyword" class="cost-icon" [ngClass]="checkKeywordFaction(keyword.factionKeyword)">[F]</div>
-              <div *ngIf="keyword.factionKeyword">&nbsp;</div>
-              <div *ngIf="keyword.hybrid" class="cost-icon hybrid-keyword">[H]</div>
-              <div *ngIf="keyword.hybrid">&nbsp;</div>
-              <div class="option-keyword">{{keyword.keyword}}</div>
-            </div>
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-      <ng-template #textInput>
-        <mat-form-field>
-          <input matInput type="number" [(ngModel)]="enteredKeyword" (blur)="calculateKeywordCost(keywordLabel, $event.target.value)">
-        </mat-form-field>
-      </ng-template>
-    </span>
-    <span *ngIf="!keywordDisabled" class="remove-keyword">
+<div *ngIf="keywordLevel !== 0" class="component-gap"></div>
+<div class="component-form">
+  <div class="component-button">
+    <span *ngIf="!keywordDisabled && keywordLevel === 0" class="remove-keyword">
       <button mat-raised-button [ngClass]="setButtonColor(keywordLabel)" (click)="removeKeyword(index)"><mat-icon>remove</mat-icon></button>
     </span>
   </div>
-  <ng-template #keywordList></ng-template>
+  <div class="component wide-dropdown" [style.padding-left.px]="20">
+    <div>
+      <span class="keyword-dropdown wide-dropdown">
+        <mat-form-field *ngIf="fixedQuantityKeywords.indexOf(keywordLabel) === -1; else textInput"
+                        class="wide-dropdown">
+          <mat-label>{{keywordLabel}}</mat-label>
+          <select matNativeControl
+                  [(ngModel)]="selectedKeyword"
+                  (ngModelChange)="processKeyword($event, 'select')"
+                  [disabled]="keywordDisabled">
+            <option [value]="null">Select Keyword...</option>
+            <option *ngFor="let keyword of keywords" [ngValue]="keyword">
+              <div class="option-row">
+                <span>[<span *ngIf="keyword.cost >= 0">+</span>{{keyword.cost}} WP] {{keyword.keyword}}&nbsp;</span>
+                <span *ngIf="keyword.tropeKeyword">(Trope)&nbsp;</span>
+                <span *ngIf="keyword.factionKeyword">(Faction)&nbsp;</span>
+                <span *ngIf="keyword.hybrid">(HybridComponent)</span>
+              </div>
+
+              <!-- <div class="option-row">
+                <div class="cost-icon" [ngClass]="checkKeywordCost(keyword.cost)">[{{keyword.cost}}]</div>
+                <div>&nbsp;</div>
+                <div *ngIf="keyword.tropeKeyword" class="cost-icon" [ngClass]="checkKeywordTrope(keyword.tropeKeyword)">[T]</div>
+                <div *ngIf="keyword.tropeKeyword">&nbsp;</div>
+                <div *ngIf="keyword.factionKeyword" class="cost-icon" [ngClass]="checkKeywordFaction(keyword.factionKeyword)">[F]</div>
+                <div *ngIf="keyword.factionKeyword">&nbsp;</div>
+                <div *ngIf="keyword.hybrid" class="cost-icon hybrid-keyword">[H]</div>
+                <div *ngIf="keyword.hybrid">&nbsp;</div>
+                <div class="option-keyword">{{keyword.keyword}}</div>
+              </div> -->
+            </option>
+            <optgroup label=""></optgroup>
+          </select>
+        </mat-form-field>
+        <ng-template #textInput>
+          <mat-form-field class="wide-dropdown">
+            <input matInput [placeholder]="keywordLabel" type="number" [(ngModel)]="enteredKeyword" (blur)="calculateKeywordCost(keywordLabel, $event.target.value)">
+          </mat-form-field>
+        </ng-template>
+        <div *ngIf="selectedKeyword" class="hint-box">{{selectedKeyword.keyword}}</div>
+      </span>
+    </div>
+    <ng-template #keywordList></ng-template>
+  </div>
 </div>

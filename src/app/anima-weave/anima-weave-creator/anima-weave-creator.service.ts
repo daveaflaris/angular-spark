@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable, BehaviorSubject} from 'rxjs';
-import {HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {HybridCommand, AnimaWeaveModel, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 @Injectable({
   providedIn: 'root'
@@ -46,6 +46,10 @@ export class AnimaWeaveCreatorService {
   hybridComponentObservable: Observable<HybridCommand>;
   hybridComponentStream = new BehaviorSubject<HybridCommand>({hybrid: [], disable: false});
 
+  animaWeave: AnimaWeaveModel = {} as AnimaWeaveModel;
+  animaWeaveObservable: Observable<AnimaWeaveModel>;
+  animaWeaveStream = new BehaviorSubject<AnimaWeaveModel>({} as AnimaWeaveModel);
+
   weavePointModifier: Observable<number>;
   weavePointCost = new BehaviorSubject<number>(0);
 
@@ -61,6 +65,7 @@ export class AnimaWeaveCreatorService {
     this.currentFactionObservable = this.currentFactionStream.asObservable();
     this.refreshWeaveObservable = this.refreshWeaveStream.asObservable();
     this.hybridComponentObservable = this.hybridComponentStream.asObservable();
+    this.animaWeaveObservable = this.animaWeaveStream.asObservable();
   }
 
   refreshAnimaWeave(refresh: boolean) {
@@ -73,6 +78,10 @@ export class AnimaWeaveCreatorService {
 
   setSelectedFaction(faction: FactionModel) {
     this.currentFactionStream.next(faction);
+  }
+
+  setAnimaWeave(animaWeave: AnimaWeaveModel) {
+    this.animaWeaveStream.next(animaWeave);
   }
 
   enableComponents(command: {hybrid: string[], disable: boolean}) {
