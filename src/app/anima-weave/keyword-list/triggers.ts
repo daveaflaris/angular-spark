@@ -1,42 +1,32 @@
 export const coreTriggerKeywords = [
   {
     component: '[Trigger]',
-    keyword: 'The character spends [Quantity] [StaticValue]',
+    keyword: 'As a Long Action, Spend [Quantity] [StaticValue]',
     cost: 3,
   },
   {
     component: '[Trigger]',
-    keyword: 'The character fails a [SkillCheck]',
+    keyword: 'As a Long Action, Succeed on a [SkillCheck]',
     cost: 1,
   },
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on a [SkillCheck]',
+    keyword: 'As a Long Action, Fail on a [SkillCheck]',
     cost: 1,
   },
   {
     component: '[Trigger]',
-    keyword: 'As an Offense Action (the Effect must inflict damage)',
+    keyword: 'As a Long Action, Consume a/an [Item]',
     cost: 1,
+  },
+  {
+    component: '[Trigger]',
+    keyword: 'As an Offense (the Effect must inflict damage to a Static Value)',
+    cost: 1
   },
   {
     component: '[Trigger]',
     keyword: 'As a Long Action',
-    cost: 0,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'When [Target] gains at least [Quantity] [StaticValue]',
-    cost: 0,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'When [Target] loses at least [Quantity] [StaticValue]',
-    cost: 0,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'The character consumes a/an [Item]',
     cost: 0,
   },
   {
@@ -56,16 +46,6 @@ export const coreTriggerKeywords = [
   },
   {
     component: '[Trigger]',
-    keyword: 'When (Anima Weave) is invoked by [Target]',
-    cost: -1,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'After (Anima Weave) is invoked by [Target]',
-    cost: -1,
-  },
-  {
-    component: '[Trigger]',
     keyword: '[Trigger] or [Trigger]',
     cost: -1,
   },
@@ -76,23 +56,8 @@ export const coreTriggerKeywords = [
   },
   {
     component: '[Trigger]',
-    keyword: 'When [Target] [Effect]',
+    keyword: 'When [Target] [Condition]',
     cost: -2,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'When [Duration] expires',
-    cost: -2,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'When an Anima Weave is invoked by [Target]',
-    cost: -4,
-  },
-  {
-    component: '[Trigger]',
-    keyword: 'After an Anima Weave is invoked by [Target]',
-    cost: -4,
   },
 
   // Hybrids
@@ -116,19 +81,19 @@ export const coreTriggerKeywords = [
   },
   {
     component: '[Trigger]',
-    keyword: '[Target] makes a [SkillCheck]. On a success, [Target] [Effect]',
+    keyword: 'As a Long Action, [Target] makes a [SkillCheck]. On a success, [Target] [Effect]',
     cost: 1,
     hybrid: ['[Target]', '[Effect]']
   },
   {
     component: '[Trigger]',
-    keyword: '[Target] makes a [SkillCheck]. On a failure, [Target] [Effect]',
+    keyword: 'As a Long Action, [Target] makes a [SkillCheck]. On a failure, [Target] [Effect]',
     cost: 1,
     hybrid: ['[Target]','[Effect]']
   },
   {
     component: '[Trigger]',
-    keyword: '[Target] makes a [SkillCheck]. On a success, [Target] [Effect]. On a failure, [Target] [Effect]',
+    keyword: 'As a Long Action, [Target] makes a [SkillCheck]. On a success, [Target] [Effect]. On a failure, [Target] [Effect]',
     cost: 0,
     hybrid: ['[Target]','[Effect]']
   },

@@ -1,5 +1,9 @@
 import {KeywordComponent} from '../keyword/keyword.component'
 
+export declare interface AnimaWeave {
+  name: string;
+}
+
 export declare interface AnimaWeaveModel {
   trigger: KeywordComponent;
   target: KeywordComponent;

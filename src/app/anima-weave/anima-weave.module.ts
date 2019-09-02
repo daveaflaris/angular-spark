@@ -9,9 +9,10 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import {MatCardModule} from '@angular/material/card';
 import { KeywordComponent } from './keyword/keyword.component';
+import { AnimaWeaveListComponent } from './anima-weave-list/anima-weave-list.component';
 
 @NgModule({
-  declarations: [AnimaWeaveCreatorComponent, KeywordComponent, AbsPipe],
+  declarations: [AnimaWeaveCreatorComponent, KeywordComponent, AbsPipe, AnimaWeaveListComponent],
   imports: [
     FormsModule,
     AngularMaterialModule,
@@ -19,7 +20,7 @@ import { KeywordComponent } from './keyword/keyword.component';
     CommonModule,
     HttpClientModule,
   ],
-  exports: [AnimaWeaveCreatorComponent],
+  exports: [AnimaWeaveCreatorComponent, AnimaWeaveListComponent],
   entryComponents: [KeywordComponent],
 })
 export class AnimaWeaveModule { }

@@ -2,7 +2,7 @@
 <div class="component-form">
   <div class="component-button">
     <span *ngIf="!keywordDisabled && keywordLevel === 0" class="remove-keyword">
-      <button mat-raised-button [ngClass]="setButtonColor(keywordLabel)" (click)="removeKeyword(index)"><mat-icon>remove</mat-icon></button>
+      <button mat-raised-button [ngClass]="setButtonColor(keywordLabel)" (click)="removeKeyword(index)"><mat-icon>delete_sweep</mat-icon></button>
     </span>
   </div>
   <div class="component wide-dropdown" [style.padding-left.px]="20">

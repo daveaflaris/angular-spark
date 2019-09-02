@@ -1,6 +1,11 @@
 export const coreSkillCheckKeywords = [
   {
     component: '[SkillCheck]',
+    keyword: 'A Skill Check (Placeholder)',
+    cost: 0,
+  },
+  {
+    component: '[SkillCheck]',
     keyword: 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete',
     cost: 0,
   },

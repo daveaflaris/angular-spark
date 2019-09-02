@@ -9,9 +9,11 @@ import {coreEffectKeywords} from '../keyword-list/effects';
 import {coreDurationKeywords} from '../keyword-list/durations';
 import {coreCooldownKeywords} from '../keyword-list/cooldowns';
 
+import {coreAnimaWeaveKeywords} from '../keyword-list/anima-weaves';
 import {coreApproachKeywords} from '../keyword-list/approaches';
 import {coreAttunementKeywords} from '../keyword-list/attunements';
 import {coreConceptKeywords} from '../keyword-list/concepts';
+import {coreConditionKeywords} from '../keyword-list/conditions';
 import {coreDicepoolKeywords} from '../keyword-list/dicepools';
 import {coreDifficultyKeywords} from '../keyword-list/difficulties';
 import {coreItemKeywords} from '../keyword-list/items';
@@ -31,7 +33,7 @@ import {AnimaWeaveCreatorService} from './anima-weave-creator.service';
 
 
 @Component({
-  selector: 'app-anima-weave-creator',
+  selector: 'anima-weave-creator',
   templateUrl: './anima-weave-creator.component.html',
   styleUrls: ['./anima-weave-creator.component.sass']
 })
@@ -63,9 +65,11 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   durationKeywords: KeywordModel[] = [...coreDurationKeywords];
   cooldownKeywords: KeywordModel[] = [...coreCooldownKeywords];
 
+  animaWeaveKeywords: KeywordModel[] = [...coreAnimaWeaveKeywords];
   approachKeywords: KeywordModel[] = [...coreApproachKeywords];
   attunementKeywords: KeywordModel[] = [...coreAttunementKeywords];
   conceptKeywords: KeywordModel[] = [...coreConceptKeywords];
+  conditionKeywords: KeywordModel[] = [...coreConditionKeywords];
   dicepoolKeywords: KeywordModel[] = [...coreDicepoolKeywords];
   difficultyKeywords: KeywordModel[] = [...coreDifficultyKeywords];
   itemKeywords: KeywordModel[] = [...coreItemKeywords];
@@ -173,9 +177,11 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.durationKeywords = [...coreDurationKeywords];
     this.cooldownKeywords = [...coreCooldownKeywords];
 
+    this.animaWeaveKeywords = [...coreAnimaWeaveKeywords];
     this.approachKeywords = [...coreApproachKeywords];
     this.attunementKeywords = [...coreAttunementKeywords];
     this.conceptKeywords = [...coreConceptKeywords];
+    this.conditionKeywords = [...coreConditionKeywords];
     this.dicepoolKeywords = [...coreDicepoolKeywords];
     this.difficultyKeywords = [...coreDifficultyKeywords];
     this.itemKeywords = [...coreItemKeywords];
@@ -224,6 +230,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
         case '[Cooldown]':
           this.cooldownKeywords.push(keyword);
           break;
+        case '[AnimaWeave]':
+          this.animaWeaveKeywords.push(keyword);
+          break;
         case '[Approach]':
           this.approachKeywords.push(keyword);
           break;
@@ -232,6 +241,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
           break;
         case '[Concept]':
           this.conceptKeywords.push(keyword);
+          break;
+        case '[Condition]':
+          this.conditionKeywords.push(keyword);
           break;
         case '[Dicepool]':
           this.dicepoolKeywords.push(keyword);
@@ -315,6 +327,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
         case '[Cooldown]':
           this.cooldownKeywords.push(keyword);
           break;
+        case '[AnimaWeave]':
+          this.animaWeaveKeywords.push(keyword);
+          break;
         case '[Approach]':
           this.approachKeywords.push(keyword);
           break;
@@ -323,6 +338,9 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
           break;
         case '[Concept]':
           this.conceptKeywords.push(keyword);
+          break;
+        case '[Condition]':
+          this.conditionKeywords.push(keyword);
           break;
         case '[Dicepool]':
           this.dicepoolKeywords.push(keyword);

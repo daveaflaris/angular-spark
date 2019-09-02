@@ -21,7 +21,7 @@ export const coreDurationKeywords = [
   },
   {
     component: '[Duration]',
-    keyword: 'For as long as [Situation] persists',
+    keyword: 'For as long as [Condition] persists',
     cost: -1,
   },
   {

@@ -26,12 +26,12 @@ export const coreCooldownKeywords = [
   },
   {
     component: '[Cooldown]',
-    keyword: 'May be triggered once per session',
-    cost: 8,
+    keyword: 'May be triggered again when [Trigger] condition is met',
+    cost: 4,
   },
   {
     component: '[Cooldown]',
-    keyword: 'May be triggered again when [Target] [Situation]',
+    keyword: 'May be triggered once per session',
     cost: 8,
   },
 ]

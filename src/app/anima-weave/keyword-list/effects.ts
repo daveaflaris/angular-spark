@@ -46,7 +46,7 @@ export const coreEffectKeywords = [
   },
   {
     component: '[Effect]',
-    keyword: 'Invokes (Anima Weave) immediately, bypassing normal triggers',
+    keyword: 'Invokes an [AnimaWeave] immediately, bypassing normal triggers',
     cost: -4,
   },
   {
@@ -61,7 +61,7 @@ export const coreEffectKeywords = [
   },
   {
     component: '[Effect]',
-    keyword: 'Becomes imbued with (Anima Weave), triggering when targeted item is used',
+    keyword: 'Becomes imbued with an [AnimaWeave], triggering when targeted item is used',
     cost: -4,
   },
   {

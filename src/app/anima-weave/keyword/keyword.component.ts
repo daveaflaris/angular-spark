@@ -6,9 +6,11 @@ import {coreEffectKeywords} from '../keyword-list/effects';
 import {coreDurationKeywords} from '../keyword-list/durations';
 import {coreCooldownKeywords} from '../keyword-list/cooldowns';
 
+import {coreAnimaWeaveKeywords} from '../keyword-list/anima-weaves';
 import {coreApproachKeywords} from '../keyword-list/approaches';
 import {coreAttunementKeywords} from '../keyword-list/attunements';
 import {coreConceptKeywords} from '../keyword-list/concepts';
+import {coreConditionKeywords} from '../keyword-list/conditions';
 import {coreDicepoolKeywords} from '../keyword-list/dicepools';
 import {coreDifficultyKeywords} from '../keyword-list/difficulties';
 import {coreItemKeywords} from '../keyword-list/items';
@@ -77,9 +79,11 @@ export class KeywordComponent implements OnInit, OnDestroy {
   durationKeywords: KeywordModel[] = [...coreDurationKeywords];
   cooldownKeywords: KeywordModel[] = [...coreCooldownKeywords];
 
+  animaWeaveKeywords: KeywordModel[] = [...coreAnimaWeaveKeywords];
   approachKeywords: KeywordModel[] = [...coreApproachKeywords];
   attunementKeywords: KeywordModel[] = [...coreAttunementKeywords];
   conceptKeywords: KeywordModel[] = [...coreConceptKeywords];
+  conditionKeywords: KeywordModel[] = [...coreConditionKeywords];
   dicepoolKeywords: KeywordModel[] = [...coreDicepoolKeywords];
   difficultyKeywords: KeywordModel[] = [...coreDifficultyKeywords];
   itemKeywords: KeywordModel[] = [...coreItemKeywords];
@@ -177,6 +181,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
             this.cooldownKeywords.push(keyword);
             this.replaceCurrentKeywords(this.cooldownKeywords, '[Cooldown]');
             break;
+          case '[AnimaWeave]':
+            this.animaWeaveKeywords.push(keyword);
+            this.replaceCurrentKeywords(this.animaWeaveKeywords, '[AnimaWeave]');
+            break;
           case '[Approach]':
             this.approachKeywords.push(keyword);
             this.replaceCurrentKeywords(this.approachKeywords, '[Approach]');
@@ -188,6 +196,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
           case '[Concept]':
             this.conceptKeywords.push(keyword);
             this.replaceCurrentKeywords(this.conceptKeywords, '[Concept]');
+            break;
+          case '[Condition]':
+            this.conditionKeywords.push(keyword);
+            this.replaceCurrentKeywords(this.conditionKeywords, '[Condition]');
             break;
           case '[Dicepool]':
             this.dicepoolKeywords.push(keyword);
@@ -281,6 +293,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
           case '[Cooldown]':
             this.cooldownKeywords.push(keyword);
             this.replaceCurrentKeywords(this.cooldownKeywords, '[Cooldown]');
+            break;
+          case '[AnimaWeave]':
+            this.animaWeaveKeywords.push(keyword);
+            this.replaceCurrentKeywords(this.animaWeaveKeywords, '[AnimaWeave]');
             break;
           case '[Approach]':
             this.approachKeywords.push(keyword);
@@ -429,6 +445,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
     this.cooldownKeywords = [...coreCooldownKeywords];
     this.replaceCurrentKeywords(this.cooldownKeywords, '[Cooldown]');
 
+    this.animaWeaveKeywords = [...coreAnimaWeaveKeywords];
+    this.replaceCurrentKeywords(this.animaWeaveKeywords, '[AnimaWeave]');
+
     this.approachKeywords = [...coreApproachKeywords];
     this.replaceCurrentKeywords(this.approachKeywords, '[Approach]');
 
@@ -437,6 +456,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
 
     this.conceptKeywords = [...coreConceptKeywords];
     this.replaceCurrentKeywords(this.conceptKeywords, '[Concept]');
+
+    this.conditionKeywords = [...coreConditionKeywords];
+    this.replaceCurrentKeywords(this.conditionKeywords, '[Condition]');
 
     this.dicepoolKeywords = [...coreDicepoolKeywords];
     this.replaceCurrentKeywords(this.dicepoolKeywords, '[Dicepool]');
@@ -530,6 +552,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
         this.selectedKeyword = null;
         this.previousKeyword = null;
       }
+
+      if (this.keywordLevel === 0) {
+        this.animaWeaveService.setWeavePoint(0, this.keywordComponent)
+      }
     }
 
     // if (this.keywordContainerRef.length < 1)
@@ -588,6 +614,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
               case '[Cooldown]':
                 this.addKeyword(this.cooldownKeywords, keyword, 1);
                 break;
+              case '[AnimaWeave]':
+                this.addKeyword(this.animaWeaveKeywords, keyword, 1);
+                break;
               case '[Approach]':
                 this.addKeyword(this.approachKeywords, keyword, 1);
                 break;
@@ -596,6 +625,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
                 break;
               case '[Concept]':
                 this.addKeyword(this.conceptKeywords, keyword, 1);
+                break;
+              case '[Condition]':
+                this.addKeyword(this.conditionKeywords, keyword, 1);
                 break;
               case '[Dicepool]':
                 this.addKeyword(this.dicepoolKeywords, keyword, 1);
@@ -763,11 +795,9 @@ export class KeywordComponent implements OnInit, OnDestroy {
     const qkr = this.getImmediateParent().getImmediateParent().selectedKeyword;
     const qkc = this.getImmediateParent().getImmediateParent().keywordComponent;
 
-    if ((qkr.keyword === 'The character spends [Quantity] [StaticValue]' && qkc === 'trigger') ||
-        (qkr.keyword === 'The character spends [Quantity] Serenity' && qkc === 'trigger') ||
-        (qkr.keyword === 'When [Target] gains at least [Quantity] [StaticValue]' && qkc === 'trigger') ||
-        (qkr.keyword === 'When [Target] loses at least [Quantity] [StaticValue]' && qkc === 'trigger') ||
-            (qkr.keyword === 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete')) {
+    if ((qkr.keyword === 'As a Long Action, Spend [Quantity] [StaticValue]' && qkc === 'trigger') ||
+        (qkr.keyword === 'As a Long Action, Spend [Quantity] Serenity' && qkc === 'trigger') ||
+        (qkr.keyword === 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete')) {
       this.keywordQuantityMultiplier = 1;
     }
     if ((qkr.keyword === '[Effect] happens in [Quantity] [Period]' && qkc === 'effect')) {

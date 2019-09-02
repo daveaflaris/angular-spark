@@ -125,4 +125,26 @@ export class AnimaWeaveCreatorService {
 
     this.weavePointCost.next(keywordCost);
   }
+
+  setWeavePoint(weavePoint: number, component: string) {
+    switch(component) {
+      case 'trigger':
+        this.triggerWeavePointCostStream.next(weavePoint);
+        break;
+      case 'target':
+        this.targetWeavePointCostStream.next(weavePoint);
+        break;
+      case 'effect':
+        this.effectWeavePointCostStream.next(weavePoint);
+        break;
+      case 'duration':
+        this.durationWeavePointCostStream.next(weavePoint);
+        break;
+      case 'cooldown':
+        this.cooldownWeavePointCostStream.next(weavePoint);
+        break;
+      default:
+        break;
+    }
+  }
 }

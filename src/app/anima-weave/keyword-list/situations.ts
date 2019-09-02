@@ -1,67 +1,77 @@
 export const coreSituationKeywords = [
   {
     component: '[Situation]',
-    keyword: 'Has no more Static Value',
-    cost: 2,
+    keyword: 'Gains a Positive Status Effect',
+    cost: 5,
   },
   {
     component: '[Situation]',
-    keyword: 'Is above half his Maximum [StaticValue] (Rounded Up)',
+    keyword: 'Gains a Negative Status Effect',
+    cost: 5,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Gains a Status Effect',
+    cost: 3,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Consumes an [Item]',
     cost: 1,
   },
   {
     component: '[Situation]',
-    keyword: 'Is below half his Maximum [StaticValue] (Rounded Up)',
-    cost: 1,
+    keyword: 'Gains any amount of [StaticValue]',
+    cost: 0,
   },
   {
     component: '[Situation]',
-    keyword: 'Has [Status]',
+    keyword: 'Loses any amount of [StaticValue]',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Spends any amount of [StaticValue]',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Succeeds on a [SkillCheck]',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Fails on a [SkillCheck]',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Hits with an Offense',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Misses with an Offense',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Is hit by an Offense',
+    cost: 0,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Is not hit by an Offense (Defends / Evades / Etc)',
     cost: 0,
   },
   {
     component: '[Situation]',
     keyword: 'Makes a [SkillCheck]',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Succeeds on a Skill Check',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Fails a Skill Check',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Makes an Offense and Hits',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Makes an Offense and Misses',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Is Hit by an Offense',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Is not Hit by an Offense (Defends / Evades / etc)',
-    cost: 0,
-  },
-  {
-    component: '[Situation]',
-    keyword: 'Draws Anima',
     cost: -1,
   },
   {
     component: '[Situation]',
-    keyword: 'Is affected by an Anima Weave',
+    keyword: 'Draws Anima',
     cost: -1,
   },
   {
@@ -76,17 +86,52 @@ export const coreSituationKeywords = [
   },
   {
     component: '[Situation]',
+    keyword: 'Heals Damage to [StaticValue]',
+    cost: -1,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Invokes an [AnimaWeave]',
+    cost: -1,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Finishes invoking an [AnimaWeave]',
+    cost: -1,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Is affected by an [AnimaWeave]',
+    cost: -1,
+  },
+  {
+    component: '[Situation]',
     keyword: 'Performs a (Task)',
     cost: -2,
   },
   {
     component: '[Situation]',
-    keyword: 'Takes his turn',
+    keyword: 'Takes his Turn',
     cost: -3,
   },
   {
     component: '[Situation]',
     keyword: 'Takes a Long Action',
     cost: -3,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Is affected by an Anima Weave',
+    cost: -5,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Invokes an Anima Weave',
+    cost: -5,
+  },
+  {
+    component: '[Situation]',
+    keyword: 'Finishes invoking an Anima Weave',
+    cost: -5,
   },
 ]

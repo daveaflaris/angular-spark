@@ -119,6 +119,16 @@ export const coreVariableQuantityKeywords = [
   },
   {
     component: '[VariableQuantity]',
+    keyword: 'Static Value Lost',
+    cost: 0,
+  },
+  {
+    component: '[VariableQuantity]',
+    keyword: 'Static Value Gained',
+    cost: 0,
+  },
+  {
+    component: '[VariableQuantity]',
     keyword: 'Offense Damage Taken',
     cost: 0,
   },
@@ -140,6 +150,11 @@ export const coreVariableQuantityKeywords = [
   {
     component: '[VariableQuantity]',
     keyword: 'Amount of [StaticValue] spent',
+    cost: 0,
+  },
+  {
+    component: '[VariableQuantity]',
+    keyword: 'A random d4 value',
     cost: 0,
   },
 ]

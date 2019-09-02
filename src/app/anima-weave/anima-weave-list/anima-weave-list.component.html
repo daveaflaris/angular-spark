@@ -1,0 +1,22 @@
+<div class="main-container">
+  <div class="keyword-gap"></div>
+  <mat-card class="step-card">
+    <div class="step-text">Enter your Anima Weave's Name</div>
+  </mat-card>
+  <div class="keyword-gap"></div>
+  <mat-card class="trope-card">
+    <div class="fundamental-component">
+      <mat-form-field class="wide-form-container">
+        <input matInput placeholder="Anima Weave" [(ngModel)]="animaWeaveName">
+      </mat-form-field>
+    </div>
+    <button mat-raised-button class="add-weave-btn" (click)="addWeave()">Add Weave</button>
+  </mat-card>
+  <div class="anima-weave-list">
+    <mat-tab-group mat-stretch-tabs>
+      <mat-tab *ngFor="let animaWeave of animaWeaves" [label]="animaWeave.name">
+        <anima-weave-creator></anima-weave-creator>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</div>

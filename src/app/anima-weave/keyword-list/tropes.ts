@@ -3,7 +3,7 @@ import {KeywordModel, TropeModel} from './keyword-model';
 export const alfarKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on a Social Skill Check at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Succeed on a Social Skill Check at [Difficulty] [Proficiency]',
     cost: 1,
     tropeKeyword: true,
   },
@@ -36,12 +36,18 @@ export const alfarKeywords: KeywordModel[] = [
 export const asceticKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character spends [Quantity] Serenity',
+    keyword: 'As a Long ACtion, Spend [Quantity] Serenity',
     cost: 3,
     tropeKeyword: true,
   },
   {
     component: '[Situation]',
+    keyword: 'Reaches full Serenity',
+    cost: 2,
+    tropeKeyword: true,
+  },
+  {
+    component: '[Condition]',
     keyword: 'Is at full Serenity',
     cost: 1,
     tropeKeyword: true,
@@ -70,13 +76,13 @@ export const augmentedKeywords: KeywordModel[] = [
   },
   {
     component: '[Trigger]',
-    keyword: 'When the character receives a positive Status Effect from an Anima Weave',
-    cost: 0,
+    keyword: 'When the character receives a positive Effect from an Anima Weave',
+    cost: 3,
     tropeKeyword: true,
   },
   {
     component: '[Trigger]',
-    keyword: 'While the character is afflicted with a positive Status Effect, the character gains an effect',
+    keyword: 'While the character is afflicted with a positive Effect, the character gains an effect',
     cost: 2,
     tropeKeyword: true,
     hybrid: ['[Target]', '[Duration]'],
@@ -104,13 +110,13 @@ export const cambionKeywords: KeywordModel[] = [
   },
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on an Infernal Skill Check at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Succeed on an Infernal Skill Check at [Difficulty] [Proficiency]',
     cost: 1,
     tropeKeyword: true,
   },
   {
     component: '[Trigger]',
-    keyword: 'The character fails on a non-Infernal Skill Check at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Fail on a non-Infernal Skill Check at [Difficulty] [Proficiency]',
     cost: 0,
     tropeKeyword: true,
   },
@@ -152,7 +158,7 @@ export const cantorKeywords: KeywordModel[] = [
 export const demigodKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on an (Epic Concept) Skill Check at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Succeed on an (Epic Concept) Skill Check at [Difficulty] [Proficiency]',
     cost: 1,
     tropeKeyword: true,
   },
@@ -368,21 +374,23 @@ export const dwarfKeywords: KeywordModel[] = [
 export const elementalKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character releases an [Attunement]',
+    keyword: 'As a Long Action, release an [Attunement]',
     cost: 3,
     tropeKeyword: true,
   },
   {
     component: '[Trigger]',
-    keyword: 'When the character has at least three [Attunement]',
+    keyword: 'While the character has at least three [Attunement], the character gains an effect',
     cost: 6,
     tropeKeyword: true,
+    hybrid: ['[Target]','[Duration]']
   },
   {
     component: '[Trigger]',
-    keyword: 'When the character has an attunement to every element',
+    keyword: 'While the character has an attunement to every element, the character gains an effect',
     cost: 10,
     tropeKeyword: true,
+    hybrid: ['[Target]','[Duration]']
   },
   {
     component: '[Effect]',
@@ -442,8 +450,14 @@ export const gnosticKeywords: KeywordModel[] = [
   },
   {
     component: '[Trigger]',
-    keyword: 'When the character invokes a Wildweave',
-    cost: 5,
+    keyword: 'When the character invokes a Wildweave and it successfully resolves',
+    cost: -4,
+    tropeKeyword: true,
+  },
+  {
+    component: '[AnimaWeave]',
+    keyword: 'Wildweave',
+    cost: -3,
     tropeKeyword: true,
   },
   {
@@ -481,7 +495,7 @@ export const gnosticKeywords: KeywordModel[] = [
 export const golemKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on an Arcane Skill Check and on a Construct Skill Check, both at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Succeed on an Arcane Skill Check and on a Construct Skill Check, both at [Difficulty] [Proficiency]',
     cost: 0,
     tropeKeyword: true,
   },
@@ -571,7 +585,7 @@ export const humanKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
     keyword: 'When the character fails a Skill Check',
-    cost: -2,
+    cost: -3,
     tropeKeyword: true,
   },
   {
@@ -749,7 +763,7 @@ export const magiKeywords: KeywordModel[] = [
   },
   {
     component: '[Effect]',
-    keyword: 'Invokes (Anima Weave) immediately, bypassing normal triggers',
+    keyword: 'Invokes an [AnimaWeave] immediately, bypassing normal triggers',
     cost: -3,
     tropeKeyword: true,
   },
@@ -782,7 +796,7 @@ export const magiKeywords: KeywordModel[] = [
 export const nephilimKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character succeeds on a Divine Skill Check and on an Infernal Skill Check, both at [Difficulty] [Proficiency]',
+    keyword: 'As a Long Action, Succeed on a Divine Skill Check and on an Infernal Skill Check, both at [Difficulty] [Proficiency]',
     cost: 0,
     tropeKeyword: true,
   },
@@ -870,7 +884,7 @@ export const ogreKeywords: KeywordModel[] = [
   },
   {
     component: '[Trigger]',
-    keyword: 'As an Offense Action (the Effect must inflict damage)',
+    keyword: 'As an Offense (the Effect must inflict damage)',
     cost: 3,
     tropeKeyword: true,
   },
@@ -1042,9 +1056,10 @@ export const sibylKeywords: KeywordModel[] = [
 export const summonerKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'While the character\'s summoned ally is alive and [Range] of [Target]',
+    keyword: 'While the character\'s summoned ally is alive and [Range] of [Target], a target gains an effect',
     cost: -2,
     tropeKeyword: true,
+    hybrid: ['[Duration]']
   },
   {
     component: '[Effect]',
@@ -1153,8 +1168,8 @@ export const syntheticKeywords: KeywordModel[] = [
 export const technomancerKeywords: KeywordModel[] = [
   {
     component: '[Trigger]',
-    keyword: 'The character uses a digital device (smartphone, laptop, etc) as part of his Long Action to invoke this Weave',
-    cost: 4,
+    keyword: 'As a Long Action, while using a digital device (smartphone, laptop, etc)',
+    cost: 2,
     tropeKeyword: true,
   },
   {

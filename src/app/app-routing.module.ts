@@ -1,10 +1,10 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { AnimaWeaveCreatorComponent} from './anima-weave/anima-weave-creator/anima-weave-creator.component'
+import { AnimaWeaveListComponent} from './anima-weave/anima-weave-list/anima-weave-list.component'
 
 const routes: Routes = [
-    { path: '', component: AnimaWeaveCreatorComponent},
+    { path: '', component: AnimaWeaveListComponent},
 ];
 
 @NgModule({
