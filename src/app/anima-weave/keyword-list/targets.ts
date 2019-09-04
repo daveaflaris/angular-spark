@@ -37,7 +37,7 @@ export const coreTargetKeywords = [
   {
     component: '[Target]',
     keyword: 'A random [Target]',
-    cost: 1,
+    cost: 0,
   },
   {
     component: '[Target]',
