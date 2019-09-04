@@ -28,7 +28,7 @@ import {coreStaticValueKeywords} from '../keyword-list/static-values';
 import {coreStatusKeywords} from '../keyword-list/statuses';
 import {coreTimeframeKeywords} from '../keyword-list/timeframes';
 
-import {AnimaWeaveModel, KeywordModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {AnimaWeave, AnimaWeaveModel, KeywordModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 import {AnimaWeaveCreatorService} from './anima-weave-creator.service';
 
 
@@ -48,6 +48,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   @ViewChild('cooldowns', {read: ViewContainerRef, static: false}) cooldownContainerRef: ViewContainerRef;
 
   animaWeave: AnimaWeaveModel = {} as AnimaWeaveModel;
+  currentAnimaWeave: AnimaWeave = {} as AnimaWeave;
   animaWeaveComponents: KeywordModel[] = [];
 
   keywordIndex: number = 0;
@@ -433,8 +434,8 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
         this.animaWeaveComponents[index] = child.selectedKeyword;
         // console.log('leaving parent');
       })
-      this.animaWeave.components = this.animaWeaveComponents;
-      this.animaWeaveService.setCurrentAnimaWeave(this.animaWeave);
+      this.currentAnimaWeave.components = this.animaWeaveComponents;
+      this.animaWeaveService.setCurrentAnimaWeave(this.currentAnimaWeave);
     }
   }
 

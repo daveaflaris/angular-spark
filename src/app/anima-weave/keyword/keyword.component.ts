@@ -26,7 +26,7 @@ import {coreStatusKeywords} from '../keyword-list/statuses';
 import {coreTimeframeKeywords} from '../keyword-list/timeframes';
 import {tropes} from '../keyword-list/tropes';
 
-import {KeywordModel, AnimaWeaveModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {KeywordModel, AnimaWeave, AnimaWeaveModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 import {AnimaWeaveCreatorService} from '../anima-weave-creator/anima-weave-creator.service';
 

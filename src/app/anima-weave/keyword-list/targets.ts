@@ -37,7 +37,7 @@ export const coreTargetKeywords = [
   {
     component: '[Target]',
     keyword: 'A random [Target]',
-    cost: -1,
+    cost: 1,
   },
   {
     component: '[Target]',
@@ -77,7 +77,7 @@ export const coreTargetKeywords = [
   {
     component: '[Target]',
     keyword: 'Random targets [Range] area centered around a point up to [Range] of [Target]',
-    cost: -5,
+    cost: 5,
   },
   {
     component: '[Target]',

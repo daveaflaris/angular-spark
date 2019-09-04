@@ -20,6 +20,7 @@ export class AnimaWeaveListComponent implements OnInit {
   addWeave() {
     const animaWeave: AnimaWeave = {
       name: this.animaWeaveName,
+      components: [],
     }
     this.animaWeaves.push(animaWeave);
     this.animaWeaveName = '';
