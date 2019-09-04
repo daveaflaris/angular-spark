@@ -1,4 +1,35 @@
 <div>
+  <div class="keyword-gap"></div>
+  <mat-accordion>
+    <mat-expansion-panel class=panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title class="panel-text">Full Rules and Text</mat-panel-title>
+        <mat-panel-description class="panel-description">Click to Expand</mat-panel-description>
+      </mat-expansion-panel-header>
+      <div>
+        <anima-weave-text [childKeywords]="animaWeaveComponents" [level]="0"></anima-weave-text>
+        <div>
+          <mat-chip-list>
+            <mat-chip class="variable-background">
+              Total Weave Point Cost
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+        <div class="text-gap"></div>
+        <div class="panel-text">
+          <div>{{ totalPoints | abs }}
+            <span *ngIf="totalPoints > 0; else cost">
+              <span *ngIf="totalPoints > 1; else singular">Weave Points</span>
+              <ng-template #singular>Weave Point</ng-template>
+              Added
+            </span>
+            <ng-template #cost>Weave Point Cost</ng-template>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </mat-accordion>
+  <div class="keyword-gap"></div>
   <mat-card class="step-card">
     <div class="step-text">Step 1: Select your Trope and Patron Faction</div>
   </mat-card>

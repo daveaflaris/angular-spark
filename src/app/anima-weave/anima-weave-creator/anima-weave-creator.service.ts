@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Observable, BehaviorSubject} from 'rxjs';
-import {HybridCommand, AnimaWeaveModel, TropeModel, FactionModel} from '../keyword-list/keyword-model';
+import {HybridCommand, AnimaWeaveModel, AnimaWeave, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 @Injectable({
   providedIn: 'root'
@@ -50,6 +50,10 @@ export class AnimaWeaveCreatorService {
   animaWeaveObservable: Observable<AnimaWeaveModel>;
   animaWeaveStream = new BehaviorSubject<AnimaWeaveModel>({} as AnimaWeaveModel);
 
+  currentAnimaWeave: AnimaWeave = {} as AnimaWeave;
+  currentAnimaWeaveObservable: Observable<AnimaWeave>;
+  currentAnimaWeaveStream = new BehaviorSubject<AnimaWeave>({} as AnimaWeave);
+
   weavePointModifier: Observable<number>;
   weavePointCost = new BehaviorSubject<number>(0);
 
@@ -66,6 +70,7 @@ export class AnimaWeaveCreatorService {
     this.refreshWeaveObservable = this.refreshWeaveStream.asObservable();
     this.hybridComponentObservable = this.hybridComponentStream.asObservable();
     this.animaWeaveObservable = this.animaWeaveStream.asObservable();
+    this.currentAnimaWeaveObservable = this.currentAnimaWeaveStream.asObservable();
   }
 
   refreshAnimaWeave(refresh: boolean) {
@@ -82,6 +87,10 @@ export class AnimaWeaveCreatorService {
 
   setAnimaWeave(animaWeave: AnimaWeaveModel) {
     this.animaWeaveStream.next(animaWeave);
+  }
+
+  setCurrentAnimaWeave(animaWeave: AnimaWeave) {
+    this.currentAnimaWeaveStream.next(animaWeave);
   }
 
   enableComponents(command: {hybrid: string[], disable: boolean}) {
@@ -129,18 +138,23 @@ export class AnimaWeaveCreatorService {
   setWeavePoint(weavePoint: number, component: string) {
     switch(component) {
       case 'trigger':
+        this.triggerWeavePointCost = weavePoint;
         this.triggerWeavePointCostStream.next(weavePoint);
         break;
       case 'target':
+        this.targetWeavePointCost = weavePoint;
         this.targetWeavePointCostStream.next(weavePoint);
         break;
       case 'effect':
+        this.effectWeavePointCost = weavePoint;
         this.effectWeavePointCostStream.next(weavePoint);
         break;
       case 'duration':
+        this.durationWeavePointCost = weavePoint;
         this.durationWeavePointCostStream.next(weavePoint);
         break;
       case 'cooldown':
+        this.cooldownWeavePointCost = weavePoint;
         this.cooldownWeavePointCostStream.next(weavePoint);
         break;
       default:

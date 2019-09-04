@@ -1,4 +1,4 @@
-import { Input, Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, OnDestroy } from '@angular/core';
+import { Input, Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, OnDestroy, ChangeDetectorRef } from '@angular/core';
 
 import {coreTriggerKeywords} from '../keyword-list/triggers';
 import {coreTargetKeywords} from '../keyword-list/targets';
@@ -49,6 +49,7 @@ export class KeywordComponent implements OnInit, OnDestroy {
   @ViewChild('keywordList', {read: ViewContainerRef, static: false}) keywordContainerRef: ViewContainerRef;
 
   animaWeave: AnimaWeaveModel;
+  currentAnimaWeave: AnimaWeave;
   animaWeaveComponents: KeywordModel[] = [];
 
   keywordIndex: number = 0;
@@ -62,6 +63,7 @@ export class KeywordComponent implements OnInit, OnDestroy {
 
   parentKeyword: KeywordComponent;
   childKeywords: KeywordComponent[] = [];
+  childComponents: KeywordModel[] = [];
 
   selectedKeyword: KeywordModel;
   previousKeyword: KeywordModel;
@@ -119,6 +121,7 @@ export class KeywordComponent implements OnInit, OnDestroy {
   constructor(
     private cfr: ComponentFactoryResolver,
     private animaWeaveService: AnimaWeaveCreatorService,
+    private cdr: ChangeDetectorRef,
     ) { }
 
   ngOnInit() {
@@ -150,6 +153,10 @@ export class KeywordComponent implements OnInit, OnDestroy {
 
     this.animaWeaveService.animaWeaveObservable.subscribe((data) => {
       this.animaWeave = data;
+    })
+
+    this.animaWeaveService.currentAnimaWeaveObservable.subscribe((data) => {
+      this.currentAnimaWeave = data;
     })
 
     // console.log(this.buildAnimaWeave(this.animaWeaveComponents));
@@ -389,7 +396,6 @@ export class KeywordComponent implements OnInit, OnDestroy {
       this.parentKeyword.getParentKeyword();
     } else {
       // Hit top-level Parent.
-      // console.log('refresh weave');
       this.animaWeaveService.refreshAnimaWeave(true);
     }
   }
@@ -401,11 +407,18 @@ export class KeywordComponent implements OnInit, OnDestroy {
     return null;
   }
 
-  getChildKeywords() {
-    this.childKeywords.forEach((child) => {
-      // console.log(child.selectedKeyword);
-      child.getChildKeywords()
-    })
+  getChildKeywords(parentKeyword: KeywordModel) {
+    if (parentKeyword) {
+      if (parentKeyword.childKeywords) {
+        this.childKeywords.forEach((child, index) => {
+          // console.log('child');
+          // console.log(child.selectedKeyword);
+          child.getChildKeywords(child.selectedKeyword)
+          parentKeyword.childKeywords[index] = child.selectedKeyword;
+          // console.log('leaving child');
+        })
+      }
+    }
   }
 
   buildAnimaWeave(animaWeaveArr: KeywordModel[]) {
@@ -549,14 +562,21 @@ export class KeywordComponent implements OnInit, OnDestroy {
         this.keywordComponentReferences.forEach((compRef) => {
           compRef.destroy();
         })
-        this.selectedKeyword = null;
-        this.previousKeyword = null;
       }
 
       if (this.keywordLevel === 0) {
         this.animaWeaveService.setWeavePoint(0, this.keywordComponent)
       }
     }
+
+    this.selectedKeyword = null;
+    this.previousKeyword = null;
+    this.childKeywords = [];
+    this.keywordComponentReferences = [];
+
+    this.getParentKeyword();
+
+    this.cdr.detectChanges();
 
     // if (this.keywordContainerRef.length < 1)
     //   return;
@@ -573,11 +593,14 @@ export class KeywordComponent implements OnInit, OnDestroy {
   }
 
   processKeyword(currentKeyword: KeywordModel, control: string) {
+    console.log(this.previousKeyword);
     if (this.previousKeyword) {
       if (this.previousKeyword.hybrid) {
         this.animaWeaveService.enableComponents({hybrid: this.previousKeyword.hybrid, disable: false});
       }
-      this.animaWeaveService.modifyWeavePoint(-(this.keywordCost), this.keywordComponent);
+      if (this.fixedQuantityKeywords.indexOf(this.previousKeyword.keyword) === -1) {
+        this.animaWeaveService.modifyWeavePoint(-(this.previousKeyword.cost), this.keywordComponent);
+      }
     }
     this.keywordComponentReferences.forEach((compRef) => {
       compRef.destroy();
@@ -713,7 +736,6 @@ export class KeywordComponent implements OnInit, OnDestroy {
           }
         }
 
-
         this.previousKeyword = this.selectedKeyword;
       }
 
@@ -804,6 +826,20 @@ export class KeywordComponent implements OnInit, OnDestroy {
       this.keywordQuantityMultiplier = 2;
     }
 
+    // Double Multiplier on Quantities with Multiple Targets
+    const multiTargetKeywords = [
+      '[Quantity] [Target]',
+      'All [Target]',
+      'All enemies [Range] area centered around a point up to [Range] of [Target]',
+      'All allies [Range] area centered around a point up to [Range] of [Target]',
+      'All items [Range] area centered around a point up to [Range] of [Target]'
+    ];
+    if (this.currentAnimaWeave.components[1]) {
+      if (multiTargetKeywords.indexOf(this.currentAnimaWeave.components[1].keyword) !== -1) {
+        this.keywordQuantityMultiplier = this.keywordQuantityMultiplier * 2;
+      }
+    }
+
     if (this.currentQuantity !== -1) {
       const prevKeyword = {
         keyword: label,
@@ -812,7 +848,8 @@ export class KeywordComponent implements OnInit, OnDestroy {
       this.processKeyword(prevKeyword, 'text');
     }
     const newKeyword = {
-      keyword: label,
+      component: label,
+      keyword: String(cost),
       cost: this.keywordQuantityMultiplier * cost,
     }
     this.selectedKeyword = newKeyword;

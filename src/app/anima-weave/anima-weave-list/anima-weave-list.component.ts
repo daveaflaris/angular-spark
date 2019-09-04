@@ -11,7 +11,8 @@ export class AnimaWeaveListComponent implements OnInit {
   animaWeaves: AnimaWeave[] = [];
   animaWeaveName: string = '';
 
-  constructor() { }
+  constructor(
+  ) { }
 
   ngOnInit() {
   }

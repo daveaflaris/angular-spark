@@ -1,8 +1,14 @@
 /* You can add global styles to this file, and also import other style files */
 @import url(https://fonts.googleapis.com/css?family=Aldrich&display=swap)
 
+html,
 body
   font-family: 'Aldritch', sans-serif
+  background-color: #303030
+  margin: unset
+  height: 100%
+  display: flex
+  flex-direction: column
 
 .header
   display: flex
@@ -23,25 +29,45 @@ body
   padding-top: 20px
   display: flex
   justify-content: center
-  background-color: #EFEFEF
+  background-color: #303030
+  color: rgba(255,255,255,0.8)
+  flex-shrink: 0
 
 .small-footer
   font-size: 10pt
   display: flex
   justify-content: center
-  background-color: #EFEFEF
+  background-color: #303030
   padding-bottom: 10px
+  color: rgba(255,255,255,0.8)
+  flex-shrink: 0
+
+.app-container
+  height: 100%
+  display: flex
+  flex-direction: column
 
 .container
   display: flex
+  flex-grow: 1
 
 .left
+  min-width: 20px
   flex-grow: 1
   background-color: #AD343E
 
 .center
+  display: flex
+  flex-direction: column
   flex-grow: 10
 
 .right
+  min-width: 20px
   flex-grow: 1
   background-color: #AD343E
+
+.content
+  flex: 1 0 auto
+
+.mat-tab-label-content
+  color: #FFFFFF

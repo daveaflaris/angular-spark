@@ -44,7 +44,7 @@
             <input matInput [placeholder]="keywordLabel" type="number" [(ngModel)]="enteredKeyword" (blur)="calculateKeywordCost(keywordLabel, $event.target.value)">
           </mat-form-field>
         </ng-template>
-        <div *ngIf="selectedKeyword" class="hint-box">{{selectedKeyword.keyword}}</div>
+        <div class="hint-box"><span *ngIf="selectedKeyword">{{selectedKeyword.keyword}}</span></div>
       </span>
     </div>
     <ng-template #keywordList></ng-template>

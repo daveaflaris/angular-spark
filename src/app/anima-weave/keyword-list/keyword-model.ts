@@ -2,6 +2,7 @@ import {KeywordComponent} from '../keyword/keyword.component'
 
 export declare interface AnimaWeave {
   name: string;
+  components: KeywordModel[];
 }
 
 export declare interface AnimaWeaveModel {

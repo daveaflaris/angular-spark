@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
+import { Input, AfterViewInit, Component, OnInit, ViewContainerRef, ViewChild, ComponentRef, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
 import {KeywordComponent} from '../keyword/keyword.component';
 import {tropes} from '../keyword-list/tropes';
 import {factions} from '../keyword-list/factions';
@@ -39,6 +39,8 @@ import {AnimaWeaveCreatorService} from './anima-weave-creator.service';
 })
 export class AnimaWeaveCreatorComponent implements AfterViewInit {
 
+  @Input() animaWeaveName: string;
+
   @ViewChild('triggers', {read: ViewContainerRef, static: false}) triggerContainerRef: ViewContainerRef;
   @ViewChild('targets', {read: ViewContainerRef, static: false}) targetContainerRef: ViewContainerRef;
   @ViewChild('effects', {read: ViewContainerRef, static: false}) effectContainerRef: ViewContainerRef;
@@ -46,6 +48,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   @ViewChild('cooldowns', {read: ViewContainerRef, static: false}) cooldownContainerRef: ViewContainerRef;
 
   animaWeave: AnimaWeaveModel = {} as AnimaWeaveModel;
+  animaWeaveComponents: KeywordModel[] = [];
 
   keywordIndex: number = 0;
   keywordComponentReferences = [];
@@ -163,11 +166,37 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   }
 
   resetAnimaWeave() {
-    this.childKeywords[0].processKeyword(null, '');
-    this.childKeywords[1].processKeyword(null, '');
-    this.childKeywords[2].processKeyword(null, '');
-    this.childKeywords[3].processKeyword(null, '');
-    this.childKeywords[4].processKeyword(null, '');
+    if (this.childKeywords[0]) {
+      this.childKeywords[0].processKeyword(null, '');
+      this.childKeywords[0].previousKeyword = null;
+      this.childKeywords[0].selectedKeyword = null;
+    }
+    if (this.childKeywords[1]) {
+      this.childKeywords[1].processKeyword(null, '');
+      this.childKeywords[1].previousKeyword = null;
+      this.childKeywords[1].selectedKeyword = null;
+    }
+    if (this.childKeywords[2]) {
+      this.childKeywords[2].processKeyword(null, '');
+      this.childKeywords[2].previousKeyword = null;
+      this.childKeywords[2].selectedKeyword = null;
+    }
+    if (this.childKeywords[3]) {
+      this.childKeywords[3].processKeyword(null, '');
+      this.childKeywords[3].previousKeyword = null;
+      this.childKeywords[3].selectedKeyword = null;
+    }
+    if (this.childKeywords[4]) {
+      this.childKeywords[4].processKeyword(null, '');
+      this.childKeywords[4].previousKeyword = null;
+      this.childKeywords[4].selectedKeyword = null;
+    }
+
+    this.animaWeaveService.setWeavePoint(0, 'trigger');
+    this.animaWeaveService.setWeavePoint(0, 'target');
+    this.animaWeaveService.setWeavePoint(0, 'effect');
+    this.animaWeaveService.setWeavePoint(0, 'duration');
+    this.animaWeaveService.setWeavePoint(0, 'cooldown');
   }
 
   resetKeywords() {
@@ -205,6 +234,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
 
     this.resetKeywords();
     this.resetAnimaWeave();
+    this.cdr.detectChanges();
     this.populateTropeKeywords(trope);
     if (this.selectedFaction) {
       this.populateFactionKeywords(this.selectedFaction);
@@ -302,6 +332,7 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
 
     this.resetKeywords();
     this.resetAnimaWeave();
+    this.cdr.detectChanges();
     if (this.selectedTrope) {
       this.populateTropeKeywords(this.selectedTrope);
     }
@@ -394,10 +425,17 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   }
 
   getChildKeywords() {
-    this.childKeywords.forEach((child) => {
-      // console.log(child.selectedKeyword);
-      child.getChildKeywords()
-    })
+    if (this.childKeywords) {
+      this.childKeywords.forEach((child, index) => {
+        // console.log('parent component');
+        // console.log(child.selectedKeyword);
+        child.getChildKeywords(child.selectedKeyword)
+        this.animaWeaveComponents[index] = child.selectedKeyword;
+        // console.log('leaving parent');
+      })
+      this.animaWeave.components = this.animaWeaveComponents;
+      this.animaWeaveService.setCurrentAnimaWeave(this.animaWeave);
+    }
   }
 
 

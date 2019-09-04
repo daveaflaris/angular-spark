@@ -10,12 +10,14 @@
         <input matInput placeholder="Anima Weave" [(ngModel)]="animaWeaveName">
       </mat-form-field>
     </div>
-    <button mat-raised-button class="add-weave-btn" (click)="addWeave()">Add Weave</button>
+    <button mat-raised-button class="add-weave-btn" (click)="addWeave()"
+            [disabled]="!animaWeaveName">Add Weave</button>
   </mat-card>
+  <div class="keyword-gap"></div>
   <div class="anima-weave-list">
     <mat-tab-group mat-stretch-tabs>
       <mat-tab *ngFor="let animaWeave of animaWeaves" [label]="animaWeave.name">
-        <anima-weave-creator></anima-weave-creator>
+        <anima-weave-creator [animaWeaveName]="animaWeave.name"></anima-weave-creator>
       </mat-tab>
     </mat-tab-group>
   </div>

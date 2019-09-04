@@ -1,0 +1,39 @@
+<div *ngIf="level === 0; else childLevel">
+  <div *ngFor="let component of childKeywords" [style.padding-left.px]="0">
+    <div *ngIf="component">
+      <div>
+        <mat-chip-list>
+          <mat-chip [ngClass]="getComponentClass(component.component)">
+            {{ stripComponentTags(component.component) }}
+          </mat-chip>
+        </mat-chip-list>
+      </div>
+      <div class="text-gap"></div>
+      <div class="panel-text">
+        <span>{{ component.keyword }}&nbsp;</span>
+        <span><b>[<span *ngIf="component.cost >= 0">+</span>{{ component.cost}} WP]</b></span>
+      </div>
+      <div class="text-gap"></div>
+      <div *ngIf="component.childKeywords">
+        <anima-weave-text [childKeywords]="component.childKeywords" [level]="level + 1"></anima-weave-text>
+      </div>
+      <div class="text-gap"></div>
+    </div>
+  </div>
+</div>
+<ng-template #childLevel>
+  <div *ngFor="let component of childKeywords" [style.padding-left.px]="20">
+    <div *ngIf="component">
+      <div class="panel-text">
+        <span><b>{{component.component}}:&nbsp;</b></span>
+        <span>{{ component.keyword }}&nbsp;</span>
+        <span><b>[<span *ngIf="component.cost >= 0">+</span>{{ component.cost}} WP]</b></span>
+      </div>
+      <div class="text-gap"></div>
+      <div *ngIf="component.childKeywords">
+        <anima-weave-text [childKeywords]="component.childKeywords" [level]="level + 1"></anima-weave-text>
+      </div>
+      <div class="text-gap"></div>
+    </div>
+  </div>
+</ng-template>
