@@ -17,6 +17,7 @@ export declare interface KeywordModel {
   component?: string;
   keyword: string;
   cost: number;
+  costMultiplier?: number;
   hybrid?: string[];
   tropeKeyword?: boolean;
   factionKeyword?: boolean;

@@ -92,7 +92,13 @@
             Added
           </span>
           <ng-template #cost>Weave Point Cost</ng-template>
+          <span *ngIf="triggerAdjusted">&nbsp;(*)</span>
         </div>
+      </div>
+      <div>
+        <ul>
+          <li *ngFor="let adjustment of triggerAdjustments">{{adjustment}}</li>
+        </ul>
       </div>
       <div class="keyword-gap"></div>
       <ng-template #triggers></ng-template>
@@ -111,7 +117,13 @@
             Added
           </span>
           <ng-template #cost>Weave Point Cost</ng-template>
+          <span *ngIf="targetAdjusted">&nbsp;(*)</span>
         </div>
+      </div>
+      <div>
+        <ul>
+          <li *ngFor="let adjustment of targetAdjustments">{{adjustment}}</li>
+        </ul>
       </div>
       <div class="keyword-gap"></div>
       <ng-template #targets></ng-template>
@@ -130,7 +142,13 @@
             Added
           </span>
           <ng-template #cost>Weave Point Cost</ng-template>
+          <span *ngIf="effectAdjusted">&nbsp;(*)</span>
         </div>
+      </div>
+      <div>
+        <ul>
+          <li *ngFor="let adjustment of effectAdjustments">{{adjustment}}</li>
+        </ul>
       </div>
       <div class="keyword-gap"></div>
       <ng-template #effects></ng-template>
@@ -149,9 +167,13 @@
             Added
           </span>
           <ng-template #cost>Weave Point Cost</ng-template>
+          <span *ngIf="durationAdjusted">&nbsp;(*)</span>
         </div>
       </div>
       <div>
+        <ul>
+          <li *ngFor="let adjustment of durationAdjustments">{{adjustment}}</li>
+        </ul>
       </div>
       <div class="keyword-gap"></div>
       <ng-template #durations></ng-template>
@@ -170,9 +192,13 @@
             Added
           </span>
           <ng-template #cost>Weave Point Cost</ng-template>
+          <span *ngIf="cooldownAdjusted">&nbsp;(*)</span>
         </div>
       </div>
       <div>
+        <ul>
+          <li *ngFor="let adjustment of cooldownAdjustments">{{adjustment}}</li>
+        </ul>
       </div>
       <div class="keyword-gap"></div>
       <ng-template #cooldowns></ng-template>

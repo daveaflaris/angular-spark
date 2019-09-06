@@ -26,6 +26,8 @@ import {coreStatusKeywords} from '../keyword-list/statuses';
 import {coreTimeframeKeywords} from '../keyword-list/timeframes';
 import {tropes} from '../keyword-list/tropes';
 
+import {adjustKeywordCost} from './keyword.utils';
+
 import {KeywordModel, AnimaWeave, AnimaWeaveModel, HybridCommand, TropeModel, FactionModel} from '../keyword-list/keyword-model';
 
 import {AnimaWeaveCreatorService} from '../anima-weave-creator/anima-weave-creator.service';
@@ -33,6 +35,15 @@ import {AnimaWeaveCreatorService} from '../anima-weave-creator/anima-weave-creat
 export interface Keyword {
   removeKeyword(index: number);
 }
+
+const multiTargetKeywords = [
+  '[Quantity] [Target]',
+  'All [Target]',
+  'All enemies [Range] area centered around a point up to [Range] of [Target]',
+  'All allies [Range] area centered around a point up to [Range] of [Target]',
+  'All items [Range] area centered around a point up to [Range] of [Target]',
+  'Random targets [Range] area centered around a point up to [Range] of [Target]',
+];
 
 @Component({
   selector: 'keyword',
@@ -569,10 +580,14 @@ export class KeywordComponent implements OnInit, OnDestroy {
       }
     }
 
+    this.modifyAdjustments(this.selectedKeyword, false);
+
     this.selectedKeyword = null;
     this.previousKeyword = null;
     this.childKeywords = [];
     this.keywordComponentReferences = [];
+
+    //this.animaWeaveService.setAdjustment(this.keywordComponent, []);
 
     this.getParentKeyword();
 
@@ -593,12 +608,13 @@ export class KeywordComponent implements OnInit, OnDestroy {
   }
 
   processKeyword(currentKeyword: KeywordModel, control: string) {
-    console.log(this.previousKeyword);
+    // console.log(this.currentAnimaWeave);
     if (this.previousKeyword) {
       if (this.previousKeyword.hybrid) {
         this.animaWeaveService.enableComponents({hybrid: this.previousKeyword.hybrid, disable: false});
       }
       if (this.fixedQuantityKeywords.indexOf(this.previousKeyword.keyword) === -1) {
+        // console.log(this.previousKeyword);
         this.animaWeaveService.modifyWeavePoint(-(this.previousKeyword.cost), this.keywordComponent);
       }
     }
@@ -608,6 +624,7 @@ export class KeywordComponent implements OnInit, OnDestroy {
     })
 
     if (currentKeyword) {
+      this.handleKeywordChanges(currentKeyword);
       currentKeyword = this.modifyKeywordCost(currentKeyword);
       if (control === 'select') {
         const keywordReg = /([[A-Za-z-]+])/g;
@@ -740,8 +757,8 @@ export class KeywordComponent implements OnInit, OnDestroy {
       }
 
       if (control === 'text') {
-        this.keywordCost = Number(this.enteredKeyword);
         this.animaWeaveService.modifyWeavePoint(currentKeyword.cost, this.keywordComponent);
+        this.previousKeyword = currentKeyword;
       }
 
       if (currentKeyword.hybrid) {
@@ -753,32 +770,65 @@ export class KeywordComponent implements OnInit, OnDestroy {
     }
   }
 
-  modifyKeywordCost(sk: KeywordModel) {
+  modifyAdjustments(adjustKeyword: KeywordModel, add: boolean) {
+    if (!adjustKeyword) return;
+
+    // console.log(adjustKeyword);
+
+    // Triggers
+    const periodTriggers = ['At the start of a [Period]','At the end of a [Period]'];
+    if (periodTriggers.indexOf(adjustKeyword.keyword) !== -1) {
+      this.animaWeaveService.modifyAdjustment('trigger', '[Period] keywords referenced in a [Trigger] add Weave Points equal to their Weave Point Cost', add);
+    }
+    // Targets
+    if (multiTargetKeywords.indexOf(adjustKeyword.keyword) !== -1) {
+      this.animaWeaveService.modifyAdjustment('effect', '[Quantity] keywords on [Effect]s with multiple [Target]s double their Weave Point Cost', add)
+    }
+    // Effects
+    if (adjustKeyword.keyword === '[Effect] happens in [Quantity] [Period]') {
+      this.animaWeaveService.modifyAdjustment('effect', '[Quantity] [Period] keywords referenced in an [Effect] add Weave Points equal to their Weave Point Costs', add);
+    }
+  }
+
+  modifyKeywordCost(sk: KeywordModel, action?: string, adjust?: number) {
+    this.modifyAdjustments(this.previousKeyword, false);
+    this.modifyAdjustments(sk, true);
+
     if (sk) {
       // Periods on Triggers invert Weave Point Costing
       if (sk.component === '[Period]' && this.keywordComponent === 'trigger') {
+        if (this.previousKeyword) {
+          this.previousKeyword.cost = -(this.previousKeyword.cost);
+        }
         sk.cost = -(sk.cost);
-      }
-
-      // Random Targets invert Weave Point Costing
-      if (sk.component === '[Target]' && sk.keyword.toLowerCase().indexOf('random') !== -1) {
-        sk.cost = -(sk.cost);
+        // this.animaWeaveService.addAdjustment('trigger', '[Quantity] [Period] keywords referenced in a [Trigger] add Weave Points equal to their Weave Point Costs')
       }
 
       // Effect happens in Quantity Period invert Weave Point Costing
       if (sk.component === '[Period]' && this.keywordComponent === 'effect') {
+        if (this.previousKeyword) {
+          this.previousKeyword.cost = -(this.previousKeyword.cost);
+        }
         sk.cost = -(sk.cost);
+        // this.animaWeaveService.addAdjustment('effect', '[Quantity] [Period] keywords referenced in an [Effect] add Weave Points equal to their Weave Point Costs')
       }
 
       // Variable Quantities set their value to 0 when Static Values are spent
-      if (sk.component === '[VariableQuantity]' && this.keywordComponent === 'trigger' &&
-          this.parentKeyword.parentKeyword.selectedKeyword.keyword === 'The character spends [Quantity] [StaticValue]') {
-        sk.cost = -(this.parentKeyword.selectedKeyword.cost);
+      if (sk.component === '[Quantity]' && sk.keyword.indexOf('[VariableQuantity-') !== -1 && this.keywordComponent === 'trigger' &&
+          this.parentKeyword.selectedKeyword.keyword === 'As a Long Action, Spend [Quantity] [StaticValue]') {
+        // if (this.previousKeyword) {
+        //   this.previousKeyword.cost = -(this.previousKeyword.cost);
+        // }
+        // sk.cost = -(this.parentKeyword.selectedKeyword.cost);
+        sk.cost = 0;
       }
 
       // Ongoing Skill Checks add Weave Points equal to the Skill Check's Weave Point Cost
       if (sk.component === '[VariableQuantity]' &&
           this.parentKeyword.parentKeyword.selectedKeyword.keyword === 'Ongoing [Approach] Skill Check at [Difficulty] [Proficiency], requiring [Quantity] successes to complete') {
+        if (this.previousKeyword) {
+          this.previousKeyword.cost = -(this.previousKeyword.cost);
+        }
         sk.cost = -(this.parentKeyword.selectedKeyword.cost * 2);
       }
 
@@ -789,6 +839,13 @@ export class KeywordComponent implements OnInit, OnDestroy {
     }
 
     return sk;
+  }
+
+  traverseModifyKeywordCost(sk: KeywordModel, action?: string, adjust?: number) {
+    // Multiple Target Double the Keyword Cost of Quantity Keywords
+    if (sk.component.indexOf('[FixedQuantity-') !== -1 || sk.component.indexOf('[VariableQuantity-') !== -1) {
+      sk = adjustKeywordCost(sk, action, adjust);
+    }
   }
 
   checkKeywordCost(cost: number) {
@@ -812,10 +869,82 @@ export class KeywordComponent implements OnInit, OnDestroy {
     return '';
   }
 
+  handleKeywordChanges(keyword: KeywordModel) {
+    let keywordWildcards = [];
+    let action = '';
+    let adjust = -1;
+
+    // Handle Top-Level Keyword Changes
+    if (this.keywordLevel === 0 && this.keywordComponent === 'target') {
+      // Check if there is an Effect Present
+      if (this.currentAnimaWeave.components) {
+        if (this.currentAnimaWeave.components[2]) {
+          let singlePrevious = false;
+          if (this.previousKeyword) {
+            if (multiTargetKeywords.indexOf(this.previousKeyword.keyword) !== -1) {
+              singlePrevious = true;
+            }
+          } else {
+            singlePrevious = true;
+          }
+
+          if (singlePrevious && multiTargetKeywords.indexOf(keyword.keyword) === -1) {
+            action = 'divide-cost';
+            adjust = 2;
+            // this.animaWeaveService.removeAdjustment('effect', '[Quantity] keywords on [Effect]s with multiple [Target]s double their Weave Point Cost')
+          }
+          if (singlePrevious && multiTargetKeywords.indexOf(keyword.keyword) !== -1) {
+            action = 'multiply-cost';
+            adjust = 2;
+            // this.animaWeaveService.addAdjustment('effect', '[Quantity] keywords on [Effect]s with multiple [Target]s double their Weave Point Cost')
+          }
+
+
+          // Adjust the Fixed and Variable Quantities of this Keyword
+          keywordWildcards = ['[FixedQuantity-', '[VariableQuantity-'];
+          this.traverseModifyKeyword(this.currentAnimaWeave.components[2], this.animaWeave.effect, keywordWildcards, this.traverseModifyKeywordCost, action, adjust);
+        }
+      }
+    }
+  }
+
+  traverseModifyKeyword(keyword: KeywordModel, keywordComponent: KeywordComponent, wildCards: string[], modifyCallback: (this: any, ...args: any[]) => void, action: string, adjust: number) {
+    // Handle this Keyword
+    if (keyword) {
+      let keywordFound = false;
+      wildCards.forEach((wildCard: string) => {
+        if (keyword.component.indexOf(wildCard) !== -1) {
+          keywordFound = true;
+        }
+      })
+      if (keywordFound) {
+        const prevKeyword = {...keyword};
+        modifyCallback(keyword, action, adjust);
+
+        // Adjust the Keyword Cost
+        this.animaWeaveService.modifyWeavePoint(-(prevKeyword.cost), keywordComponent.keywordComponent);
+        this.animaWeaveService.modifyWeavePoint(keyword.cost, keywordComponent.keywordComponent);
+      }
+
+      if (keyword.childKeywords) {
+        keyword.childKeywords.forEach((childKeyword: KeywordModel) => {
+          this.traverseModifyKeyword(childKeyword, keywordComponent, wildCards, modifyCallback, action, adjust);
+        })
+      }
+    }
+  }
+
   calculateKeywordCost(label: string, cost: number) {
-    // qkr: Quantity Keyword Reference; qkc: Quantity Keyword Component
+    // Remove Adjustments
+    // this.animaWeaveService.removeAdjustment('effect', '[Quantity] keywords on [Effect]s with multiple [Target]s double their Weave Point Cost')
+
+    this.keywordQuantityMultiplier = 1;
+    // qkr: Quantity Keyword Reference; qkc: Quantity Keyword Component; qk: Quantity Keyword
     const qkr = this.getImmediateParent().getImmediateParent().selectedKeyword;
     const qkc = this.getImmediateParent().getImmediateParent().keywordComponent;
+    const qk = this.getImmediateParent().selectedKeyword;
+
+    this.keywordQuantityMultiplier = qk.cost;
 
     if ((qkr.keyword === 'As a Long Action, Spend [Quantity] [StaticValue]' && qkc === 'trigger') ||
         (qkr.keyword === 'As a Long Action, Spend [Quantity] Serenity' && qkc === 'trigger') ||
@@ -827,30 +956,18 @@ export class KeywordComponent implements OnInit, OnDestroy {
     }
 
     // Double Multiplier on Quantities with Multiple Targets
-    const multiTargetKeywords = [
-      '[Quantity] [Target]',
-      'All [Target]',
-      'All enemies [Range] area centered around a point up to [Range] of [Target]',
-      'All allies [Range] area centered around a point up to [Range] of [Target]',
-      'All items [Range] area centered around a point up to [Range] of [Target]'
-    ];
     if (this.currentAnimaWeave.components[1]) {
       if (multiTargetKeywords.indexOf(this.currentAnimaWeave.components[1].keyword) !== -1) {
         this.keywordQuantityMultiplier = this.keywordQuantityMultiplier * 2;
       }
+      // this.animaWeaveService.addAdjustment('effect', '[Quantity] keywords on [Effect]s with multiple [Target]s double their Weave Point Cost')
     }
 
-    if (this.currentQuantity !== -1) {
-      const prevKeyword = {
-        keyword: label,
-        cost: -(this.keywordQuantityMultiplier * this.currentQuantity),
-      }
-      this.processKeyword(prevKeyword, 'text');
-    }
     const newKeyword = {
       component: label,
       keyword: String(cost),
-      cost: this.keywordQuantityMultiplier * cost,
+      cost: cost * this.keywordQuantityMultiplier,
+      costMultiplier: this.keywordQuantityMultiplier,
     }
     this.selectedKeyword = newKeyword;
     this.keywordCost = newKeyword.cost;
@@ -882,12 +999,14 @@ export class KeywordComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.modifyAdjustments(this.previousKeyword, false);
     if (this.selectedKeyword) {
       if (this.selectedKeyword.hybrid) {
         this.animaWeaveService.enableComponents({hybrid: this.previousKeyword.hybrid, disable: false});
       }
-      if (this.selectedKeyword && this.fixedQuantityKeywords.indexOf(this.selectedKeyword.keyword) === -1) {
-        this.animaWeaveService.modifyWeavePoint(-(this.keywordCost), this.keywordComponent);
+      // Do not Modify Keywords for [Quantity] keywords that are [FixedQuantity]
+      if (!(this.selectedKeyword.component === '[Quantity]' && this.selectedKeyword.keyword.indexOf('[FixedQuantity-') !== -1)) {
+        this.animaWeaveService.modifyWeavePoint(-(this.selectedKeyword.cost), this.keywordComponent);
       }
     }
   }

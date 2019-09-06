@@ -21,22 +21,37 @@ export class AnimaWeaveCreatorService {
   triggerWeavePointCost: number = 0;
   triggerWeavePointCostObservable: Observable<number>;
   triggerWeavePointCostStream = new BehaviorSubject<number>(0);
+  triggerAdjustments: string[] = [];
+  triggerAdjustmentsObservable: Observable<Array<string>>;
+  triggerAdjustmentsStream = new BehaviorSubject<Array<string>>([]);
 
   targetWeavePointCost: number = 0;
   targetWeavePointCostObservable: Observable<number>;
   targetWeavePointCostStream = new BehaviorSubject<number>(0);
+  targetAdjustments: string[] = [];
+  targetAdjustmentsObservable: Observable<Array<string>>;
+  targetAdjustmentsStream = new BehaviorSubject<Array<string>>([]);
 
   effectWeavePointCost: number = 0;
   effectWeavePointCostObservable: Observable<number>;
   effectWeavePointCostStream = new BehaviorSubject<number>(0);
+  effectAdjustments: string[] = [];
+  effectAdjustmentsObservable: Observable<Array<string>>;
+  effectAdjustmentsStream = new BehaviorSubject<Array<string>>([]);
 
   durationWeavePointCost: number = 0;
   durationWeavePointCostObservable: Observable<number>;
   durationWeavePointCostStream = new BehaviorSubject<number>(0);
+  durationAdjustments: string[] = [];
+  durationAdjustmentsObservable: Observable<Array<string>>;
+  durationAdjustmentsStream = new BehaviorSubject<Array<string>>([]);
 
   cooldownWeavePointCost: number = 0;
   cooldownWeavePointCostObservable: Observable<number>;
   cooldownWeavePointCostStream = new BehaviorSubject<number>(0);
+  cooldownAdjustments: string[] = [];
+  cooldownAdjustmentsObservable: Observable<Array<string>>;
+  cooldownAdjustmentsStream = new BehaviorSubject<Array<string>>([]);
 
   refreshWeave: boolean = false;
   refreshWeaveObservable: Observable<boolean>;
@@ -65,8 +80,16 @@ export class AnimaWeaveCreatorService {
     this.effectWeavePointCostObservable = this.effectWeavePointCostStream.asObservable();
     this.durationWeavePointCostObservable = this.durationWeavePointCostStream.asObservable();
     this.cooldownWeavePointCostObservable = this.cooldownWeavePointCostStream.asObservable();
+
+    this.triggerAdjustmentsObservable = this.triggerAdjustmentsStream.asObservable();
+    this.targetAdjustmentsObservable = this.targetAdjustmentsStream.asObservable();
+    this.effectAdjustmentsObservable = this.effectAdjustmentsStream.asObservable();
+    this.durationAdjustmentsObservable = this.durationAdjustmentsStream.asObservable();
+    this.cooldownAdjustmentsObservable = this.cooldownAdjustmentsStream.asObservable();
+
     this.currentTropeObservable = this.currentTropeStream.asObservable();
     this.currentFactionObservable = this.currentFactionStream.asObservable();
+
     this.refreshWeaveObservable = this.refreshWeaveStream.asObservable();
     this.hybridComponentObservable = this.hybridComponentStream.asObservable();
     this.animaWeaveObservable = this.animaWeaveStream.asObservable();
@@ -156,6 +179,106 @@ export class AnimaWeaveCreatorService {
       case 'cooldown':
         this.cooldownWeavePointCost = weavePoint;
         this.cooldownWeavePointCostStream.next(weavePoint);
+        break;
+      default:
+        break;
+    }
+  }
+
+  modifyAdjustment(component: string, adjustment: string, add: boolean) {
+    let adjustmentIndex = -1;
+    switch(component) {
+      case 'trigger':
+        if (add) {
+          if (this.triggerAdjustments.indexOf(adjustment) === -1) {
+            this.triggerAdjustments.push(adjustment);
+          }
+        } else {
+          adjustmentIndex = this.triggerAdjustments.indexOf(adjustment);
+          if (adjustmentIndex !== -1) {
+            this.triggerAdjustments.splice(adjustmentIndex, 1);
+          }
+        }
+        this.triggerAdjustmentsStream.next(this.triggerAdjustments);
+        break;
+      case 'target':
+        if (add) {
+          if (this.targetAdjustments.indexOf(adjustment) === -1) {
+            this.targetAdjustments.push(adjustment);
+          }
+        } else {
+          adjustmentIndex = this.targetAdjustments.indexOf(adjustment);
+          if (adjustmentIndex !== -1) {
+            this.targetAdjustments.splice(adjustmentIndex, 1);
+          }
+        }
+        this.targetAdjustmentsStream.next(this.targetAdjustments);
+        break;
+      case 'effect':
+        if (add) {
+          if (this.effectAdjustments.indexOf(adjustment) === -1) {
+            this.effectAdjustments.push(adjustment);
+          }
+        } else {
+          adjustmentIndex = this.effectAdjustments.indexOf(adjustment);
+          if (adjustmentIndex !== -1) {
+            this.effectAdjustments.splice(adjustmentIndex, 1);
+          }
+        }
+        this.effectAdjustmentsStream.next(this.effectAdjustments);
+        break;
+      case 'duration':
+        if (add) {
+          if (this.durationAdjustments.indexOf(adjustment) === -1) {
+            this.durationAdjustments.push(adjustment);
+          }
+        } else {
+          adjustmentIndex = this.durationAdjustments.indexOf(adjustment);
+          if (adjustmentIndex !== -1) {
+            this.durationAdjustments.splice(adjustmentIndex, 1);
+          }
+        }
+        this.durationAdjustmentsStream.next(this.durationAdjustments);
+        break;
+      case 'cooldown':
+        if (add) {
+          if (this.cooldownAdjustments.indexOf(adjustment) === -1) {
+            this.cooldownAdjustments.push(adjustment);
+          }
+        } else {
+          adjustmentIndex = this.cooldownAdjustments.indexOf(adjustment);
+          if (adjustmentIndex !== -1) {
+            this.cooldownAdjustments.splice(adjustmentIndex, 1);
+          }
+        }
+        this.cooldownAdjustmentsStream.next(this.cooldownAdjustments);
+        break;
+      default:
+        break;
+    }
+  }
+
+  setAdjustment(component: string, adjustments: string[]) {
+    switch(component) {
+      case 'trigger':
+        this.triggerAdjustments  = adjustments;
+        this.triggerAdjustmentsStream.next(this.triggerAdjustments);
+        break;
+      case 'target':
+        this.targetAdjustments  = adjustments;
+        this.targetAdjustmentsStream.next(this.targetAdjustments);
+        break;
+      case 'effect':
+        this.effectAdjustments  = adjustments;
+        this.effectAdjustmentsStream.next(this.effectAdjustments);
+        break;
+      case 'duration':
+        this.durationAdjustments  = adjustments;
+        this.durationAdjustmentsStream.next(this.durationAdjustments);
+        break;
+      case 'cooldown':
+        this.cooldownAdjustments  = adjustments;
+        this.cooldownAdjustmentsStream.next(this.cooldownAdjustments);
         break;
       default:
         break;

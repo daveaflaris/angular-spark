@@ -91,10 +91,25 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
   timeframeKeywords: KeywordModel[] = [...coreTimeframeKeywords];
 
   triggerPoints: number = 0;
+  triggerAdjusted: boolean = false;
+  triggerAdjustments: string[] = [];
+
   targetPoints: number = 0;
+  targetAdjusted: boolean = false;
+  targetAdjustments: string[] = [];
+
   effectPoints: number = 0;
+  effectAdjusted: boolean = false;
+  effectAdjustments: string[] = [];
+
   durationPoints: number = 0;
+  durationAdjusted: boolean = false;
+  durationAdjustments: string[] = [];
+
   cooldownPoints: number = 0;
+  cooldownAdjusted: boolean = false;
+  cooldownAdjustments: string[] = [];
+
   totalPoints: number = 0;
 
   constructor(
@@ -119,6 +134,48 @@ export class AnimaWeaveCreatorComponent implements AfterViewInit {
     this.animaWeaveService.cooldownWeavePointCostObservable.subscribe((data) => {
       this.cooldownPoints = data;
     });
+
+    this.animaWeaveService.triggerAdjustmentsObservable.subscribe((data) => {
+      if (data.length > 0) {
+        this.triggerAdjusted = true;
+      } else {
+        this.triggerAdjusted = false;
+      }
+      this.triggerAdjustments = data;
+    });
+    this.animaWeaveService.targetAdjustmentsObservable.subscribe((data) => {
+      if (data.length > 0) {
+        this.targetAdjusted = true;
+      } else {
+        this.targetAdjusted = false;
+      }
+      this.targetAdjustments = data;
+    });
+    this.animaWeaveService.effectAdjustmentsObservable.subscribe((data) => {
+      if (data.length > 0) {
+        this.effectAdjusted = true;
+      } else {
+        this.effectAdjusted = false;
+      }
+      this.effectAdjustments = data;
+    });
+    this.animaWeaveService.durationAdjustmentsObservable.subscribe((data) => {
+      if (data.length > 0) {
+        this.durationAdjusted = true;
+      } else {
+        this.durationAdjusted = false;
+      }
+      this.durationAdjustments = data;
+    });
+    this.animaWeaveService.cooldownAdjustmentsObservable.subscribe((data) => {
+      if (data.length > 0) {
+        this.cooldownAdjusted = true;
+      } else {
+        this.cooldownAdjusted = false;
+      }
+      this.cooldownAdjustments = data;
+    });
+
     this.animaWeaveService.totalWeavePointCostObservable.subscribe((data) => {
       this.totalPoints = data;
     });
